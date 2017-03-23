@@ -7,18 +7,25 @@ var models = require("../models");
 var env = process.env.NODE_ENV || 'development';
 
 
-var User = models.sequelize.define('user', {
-  username: models.Sequelize.STRING,
-  birthday: models.Sequelize.DATE
+var Article = models.sequelize.define('article', {
+  title: models.Sequelize.STRING,
+  author: models.Sequelize.STRING,
+  publish_date: models.Sequelize.DATE,
+  body: models.Sequelize.TEXT,
+  body_md5: models.Sequelize.STRING,
+  source_id: models.Sequelize.INTEGER,
+  url: models.Sequelize.STRING,
+  thumbnail_url: models.Sequelize.STRING,
+  sentiment: models.Sequelize.FLOAT
 });
 
 models.sequelize.sync().then(function() {
-  return User.create({
-    username: 'janedoe',
-    birthday: new Date(1980, 6, 20)
+  return Article.create({
+    title: 'janedoe',
+    publish_date: new Date(1980, 6, 20)
   });
-}).then(function(jane) {
-  console.log(jane.get({
+}).then(function(entry) {
+  console.log(entry.get({
     plain: true
   }));
 });
