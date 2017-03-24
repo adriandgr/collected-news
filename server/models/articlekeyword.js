@@ -1,13 +1,20 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var ArticleKeyword = sequelize.define('ArticleKeyword', {
-    name: DataTypes.STRING
+
+module.exports = (sequelize) => {
+  const ArticleKeyword = sequelize.define('ArticleKeyword', {
+
   }, {
     classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
+      associate: (models) => {
+        ArticleKeyword.belongsTo(models.Article, {
+          foreignKey: 'articleId',
+          onDelete: 'CASCADE',
+        });
+        ArticleKeyword.belongsTo(models.Keyword, {
+          foreignKey: 'keywordId',
+          onDelete: 'CASCADE',
+        });
+      },
+    },
   });
   return ArticleKeyword;
 };

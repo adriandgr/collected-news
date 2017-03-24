@@ -1,13 +1,20 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var Keyword = sequelize.define('Keyword', {
-    name: DataTypes.STRING
+
+module.exports = (sequelize, DataTypes) => {
+  const Keyword = sequelize.define('Keyword', {
+    name: DataTypes.STRING,
   }, {
     classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
+      associate: (models) => {
+        Keyword.hasMany(models.ArticleKeyword, {
+          foreignKey: 'keywordId',
+          as: 'articleKeywords',
+        });
+        Keyword.hasMany(models.KeywordSource, {
+          foreignKey: 'keywordId',
+          as: 'keywordSources',
+        });
+      },
+    },
   });
   return Keyword;
 };

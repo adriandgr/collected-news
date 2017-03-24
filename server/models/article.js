@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
     publishDate: {
       type: DataTypes.DATE,
     },
+    snippet: {
+      type: DataTypes.TEXT,
+    },
     body: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -35,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         Article.belongsTo(models.Source, {
           foreignKey: 'sourceId',
           onDelete: 'CASCADE',
+        });
+        Article.hasMany(models.ArticleKeyword, {
+          foreignKey: 'articleId',
+          as: 'articleKeywords',
         });
       },
     },

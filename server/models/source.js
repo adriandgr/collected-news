@@ -1,14 +1,22 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var Source = sequelize.define('Source', {
+
+module.exports = (sequelize, DataTypes) => {
+  const Source = sequelize.define('Source', {
     name: DataTypes.STRING,
-    url: DataTypes.STRING
+    description: DataTypes.STRING,
+    url: DataTypes.STRING,
   }, {
     classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
+      associate: (models) => {
+        Source.hasMany(models.Article, {
+          foreignKey: 'sourceId',
+          as: 'articles',
+        });
+        Source.hasMany(models.KeywordSource, {
+          foreignKey: 'sourceId',
+          as: 'keywordSources',
+        });
+      },
+    },
   });
   return Source;
 };

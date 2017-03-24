@@ -1,11 +1,18 @@
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   const KeywordSource = sequelize.define('KeywordSource', {
-    name: DataTypes.STRING,
+
   }, {
     classMethods: {
       associate: (models) => {
-        // associations can be defined here
+        KeywordSource.belongsTo(models.Keyword, {
+          foreignKey: 'keywordId',
+          onDelete: 'CASCADE',
+        });
+        KeywordSource.belongsTo(models.Source, {
+          foreignKey: 'sourceId',
+          onDelete: 'CASCADE',
+        });
       },
     },
   });
