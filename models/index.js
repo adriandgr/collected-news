@@ -11,8 +11,20 @@ const sequelize = new Sequelize(config.db.database, config.db.username, config.d
   pool: config.db.pool
 });
 
+var Article = sequelize.define('article', {
+  title: Sequelize.STRING,
+  author: Sequelize.STRING,
+  publish_date: Sequelize.DATE,
+  body: Sequelize.TEXT,
+  body_md5: Sequelize.STRING,
+  source_id: Sequelize.INTEGER,
+  url: Sequelize.STRING,
+  thumbnail_url: Sequelize.STRING,
+  sentiment: Sequelize.FLOAT
+});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.Article = Article;
 
 module.exports = db;
