@@ -9,20 +9,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'Not found',
     },
-    publishDate: {
+    pubDate: {
       type: DataTypes.DATE,
     },
     snippet: {
       type: DataTypes.TEXT,
     },
-    body: {
+    content: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    bodyHash: {
+    contentHash: {
       type: DataTypes.STRING,
     },
-    url: {
+    link: {
       type: DataTypes.STRING,
     },
     leadImageUrl: {

@@ -1,7 +1,10 @@
 
 module.exports = (sequelize) => {
   const ArticleKeyword = sequelize.define('ArticleKeyword', {
-
+    frequency: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   }, {
     classMethods: {
       associate: (models) => {

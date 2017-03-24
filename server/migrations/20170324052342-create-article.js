@@ -15,14 +15,14 @@ module.exports = {
       author: {
         type: Sequelize.STRING,
       },
-      publishDate: {
+      pubDate: {
         type: Sequelize.DATE,
       },
-      body: {
+      content: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      bodyHash: {
+      contentHash: {
         type: Sequelize.STRING,
       },
       sourceId: {
@@ -34,7 +34,7 @@ module.exports = {
           as: 'sourceId',
         },
       },
-      url: {
+      link: {
         type: Sequelize.STRING,
       },
       leadImageUrl: {
