@@ -7,18 +7,6 @@ var models = require("../models");
 var env = process.env.NODE_ENV || 'development';
 
 
-// var Article = models.sequelize.define('article', {
-//   title: models.Sequelize.STRING,
-//   author: models.Sequelize.STRING,
-//   publish_date: models.Sequelize.DATE,
-//   body: models.Sequelize.TEXT,
-//   body_md5: models.Sequelize.STRING,
-//   source_id: models.Sequelize.INTEGER,
-//   url: models.Sequelize.STRING,
-//   thumbnail_url: models.Sequelize.STRING,
-//   sentiment: models.Sequelize.FLOAT
-// });
-
 models.sequelize.sync().then(function() {
   return models.Article.create({
     title: 'janedoe',
