@@ -10,6 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "gramophone": "0.0.3",
+    "request": "^2.81.0",
+    "rss-parser": "^2.5.2",
+    "sanitize-html": "^1.14.1",
+    "sentiment": "^3.0.1"
   }
 }
