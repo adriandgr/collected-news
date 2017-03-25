@@ -1,5 +1,5 @@
 
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const ArticleKeyword = sequelize.define('ArticleKeyword', {
     frequency: {
       type: DataTypes.INTEGER,
