@@ -5,7 +5,8 @@ module.exports = {
     return Source
       .create({
         name: req.body.name,
-        url: req.body.url,
+        description: req.body.description,
+        link: req.body.url,
       })
       .then((source) => res.status(201).send(source))
       .catch((err) => res.status(400).send(err));

@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Source = sequelize.define('Source', {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
-    url: DataTypes.STRING,
+    link: DataTypes.STRING,
   }, {
     classMethods: {
       associate: (models) => {
