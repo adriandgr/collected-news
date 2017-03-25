@@ -1,22 +1,19 @@
-// rss = require('./utils/rss');
-keywords = require('./utils/keywords');
-sentiment = require('./utils/sentiment');
-
 const rss = require('rss-parser');
 const request = require('request');
-sanitizeHTML = require('sanitize-html');
+const sanitizeHTML = require('sanitize-html');
 g = require('gramophone');
 s = require('sentiment');
 
+const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
+let results = [];
 
-// Step 1 - parse RSS feeds and get an array of articles from each source
+// Step 1 - parse RSS feeds and resolve an array of articles from each source
 function getFeeds() {
   const feeds = [];
-  sources.forEach((source, index) => {
+  sources.forEach((source) => {
     feeds.push(new Promise(resolve => {
       rss.parseURL(source, (err, parsed) => {
-        console.log('Parsed RSS for', source, ' => next: Step 2');
         err && console.error(err);
         resolve(parsed.feed.entries);
       });
@@ -39,7 +36,7 @@ function normalize(articles) {
         }
       );
     } else {
-      console.error('Discarding article w/out publish date');
+      console.error('Discarding article w/out published date');
     }
   });
   return normalized;
@@ -70,14 +67,16 @@ function getStories(articles) {
     url: URL,
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19'
+      'x-api-key': MERCURY_API_KEY
     }
   };
 
   let stories = [];
 
   articles.forEach((article, i) => {
+
     options.url += article.link;
+
     stories.push(new Promise(resolve => {
       request( options, (err, response, b) => {
         err && console.error('Mercury failed', err);
@@ -86,8 +85,10 @@ function getStories(articles) {
           allowedTags: [],
           allowedAttributes: []
         });
+
         console.log('  => Article processed');
-        resolve(story);
+        const leadImgUrl = body.lead_image_url;
+        resolve( { leadImgUrl: leadImgUrl, content: story } );
       });
     }));
     options.url = URL;
@@ -96,10 +97,10 @@ function getStories(articles) {
   return stories;
 }
 
-function getKeywords(stories) {
+function getKeywords(bodies) {
   let keywords = [];
-  stories.forEach(story => {
-    keywords.push(g.extract(story, { score: true, limit: 5 }));
+  bodies.forEach(body => {
+    keywords.push(g.extract(body, { score: true, limit: 5 }));
     keywords.length === 0 ? err(new Error('Gramophone failed to find keywords')) : null;
   });
   return keywords;
@@ -120,31 +121,59 @@ const sources = [
   // 'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
 ];
 
+function populateInitial(articles) {
+  results = articles;
+}
+
+function populate(data) {
+  Object.keys(data).forEach((key) => {
+    data[key].forEach((value, i) => {
+      results[i][key] = value;
+    });
+  });
+}
+
 
 getFeeds(sources).forEach(feed => {
 
   feed
     .then(rawArticles => {
-      console.log(normalize(rawArticles));
       return normalize(rawArticles);
     })
     .then(articles => {
+      populateInitial(articles);
       return getStories(articles);
     })
-    // .then(stories => {
+    .then(bodies => {
+      Promise.all(bodies)
+        .then(bodies => {
 
-    //   Promise.all(stories)
-    //     .then(stories => {
-    //       let keywords = getKeywords([stories[0]]);
-    //       console.log(keywords);
-    //       let sentiments = getSentiment([stories[0]]);
-    //       console.log(sentiments);
-    //     })
-    //     .catch(err => {
-    //       console.error(err);
-    //     });
+          let content = [];
+          let leadImgUrl = [];
 
-    // })
+          bodies.forEach(body => {
+            content.push(body.content);
+            leadImgUrl.push(body.leadImgUrl);
+          });
+
+          let data = {
+            content: content,
+            leadImgUrl: leadImgUrl,
+            keywords: getKeywords(content),
+            sentiment: getSentiment(content)
+          };
+
+          populate(data);
+
+          console.log(results[0]);
+          console.log(results[5]);
+          console.log(results[10]);
+
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    })
     .catch(err => {
       console.error(err);
     });
