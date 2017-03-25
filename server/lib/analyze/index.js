@@ -6,13 +6,13 @@ s = require('sentiment');
 
 const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
-let feeds = [];
+let db = [];
 
 const sources = [
   'http://rss.cnn.com/rss/cnn_world.rss',
-  'http://globalnews.ca/feed/'
-  // 'http://feeds.foxnews.com/foxnews/world',
-  // 'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
+  'http://globalnews.ca/feed/',
+  'http://feeds.foxnews.com/foxnews/world',
+  'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
 ];
 
 // Step 1 - parse RSS feeds and resolve an array of articles from each source
@@ -133,7 +133,9 @@ function getSentiment(body) {
 
 let sample = 3;
 
-for (let feed of getFeeds(sources)) {
+getFeeds(sources).forEach((feed, index) => {
+
+  let results;
 
   feed
     .then(rawArticles => {
@@ -148,9 +150,9 @@ for (let feed of getFeeds(sources)) {
       // console.log(' => sample:');
       // console.log('\n');
       // console.log(articles[idx]);
-      feeds.push(articles);
+      results = articles;
       // console.log(articles);
-      // console.log(feeds[idx]);
+      // console.log(feeds);
       return getStories(articles);
     })
     .then(bodies => {
@@ -158,35 +160,21 @@ for (let feed of getFeeds(sources)) {
       Promise.all(bodies)
         .then(bodies => {
 
-          // feeds.forEach((feed, fI) => {
-          //   console.log(fI);
-          //   bodies.forEach((body, yI) => {
-          //     feeds[fI][yI].source = body.source;
-          //     feeds[fI][yI].content = body.content;
-          //     feeds[fI][yI].leadImgUrl = body.leadImgUrl;
-          //     feeds[fI][yI].sentiment = getSentiment(body.content);
-          //     feeds[fI][yI].keywords = getKeywords(body.content);
-          //   });
-          // });
+          bodies.forEach((body, i) => {
+            if(results[i]) {
+              results[i].id = i + 1;
+              results[i].source = body.source;
+              results[i].content = body.content;
+              results[i].leadImgUrl = body.leadImgUrl;
+              results[i].sentiment = getSentiment(body.content);
+              results[i].keywords = getKeywords(body.content);
+            }
+          });
 
-          // console.log( feeds[0][sample]);
+          console.log('\n\n Final results\n');
+          console.log(' => Processed', results.length, 'articles\n');
+          console.log(results[sample]);
 
-          // bodies.forEach((body, i) => {
-          //   if(results[i]) {
-          //     // console.log(results[i]);
-          //     results[i].id = i;
-          //     results[i].source = body.source;
-          //     results[i].content = body.content;
-          //     results[i].leadImgUrl = body.leadImgUrl;
-          //     results[i].sentiment = getSentiment(body.content);
-          //     results[i].keywords = getKeywords(body.content);
-          //   }
-          // });
-
-          // console.log('\n\n Final results\n');
-          // console.log(results[idx]);
-
-          // console.log(results[0]);
 
         })
         .catch(err => {
@@ -196,6 +184,7 @@ for (let feed of getFeeds(sources)) {
     .catch(err => {
       console.error(err);
     });
-}
+});
+
 
 
