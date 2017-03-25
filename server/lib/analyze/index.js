@@ -8,6 +8,13 @@ const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
 let results = [];
 
+const sources = [
+  'http://rss.cnn.com/rss/cnn_world.rss',
+  'http://globalnews.ca/feed/'
+  // 'http://feeds.foxnews.com/foxnews/world',
+  // 'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
+];
+
 // Step 1 - parse RSS feeds and resolve an array of articles from each source
 function getFeeds() {
   const feeds = [];
@@ -15,7 +22,14 @@ function getFeeds() {
     feeds.push(new Promise(resolve => {
       rss.parseURL(source, (err, parsed) => {
         err && console.error(err);
-        resolve(parsed.feed.entries);
+        if(parsed.feed.title) {
+          console.log('\n\n');
+          console.log(parsed.feed.title);
+          resolve( { title: parsed.feed.title, articles: parsed.feed.entries } );
+        } else {
+          console.error('\n\nFound no RSS Feed title');
+          resolve( { title: '', articles: parsed.feed.entries } );
+        }
       });
     }));
   });
@@ -24,43 +38,47 @@ function getFeeds() {
 
 function normalize(articles) {
   normalized = [];
-
-  articles.forEach(article => {
-    if(article.pubDate) {
-      normalized.push(
-        {
-          title: article.title,
-          link: article.link,
-          pubDate: article.pubDate,
-          snippet: article.contentSnippet
-        }
-      );
-    } else {
-      console.error('Discarding article w/out published date');
-    }
+  return new Promise((resolve, reject) => {
+    articles.forEach(article => {
+      if(article.pubDate) {
+        normalized.push(
+          {
+            title: article.title,
+            link: article.link,
+            pubDate: article.pubDate,
+            snippet: article.contentSnippet
+          }
+        );
+        resolve(normalized);
+      } else {
+        reject('Discarding article w/out published date');
+      }
+    });
   });
-  return normalized;
 }
 
 
 // (called inside of Step 2)
 function fetchMercury(options) {
 
-  request(options, (err, response, b) => {
-    err && console.error('Mercury failed', err);
-    body = JSON.parse(b);
-    const story = sanitizeHTML(body.content, {
-      allowedTags: [],
-      allowedAttributes: []
+  return new Promise(resolve => {
+    request(options, (err, response, b) => {
+      err && console.error('Mercury failed', err);
+      body = JSON.parse(b);
+      const story = sanitizeHTML(body.content, {
+        allowedTags: [],
+        allowedAttributes: []
+      });
+      const leadImgUrl = body.lead_image_url;
+      resolve( { leadImgUrl: leadImgUrl, content: story } );
     });
-    console.log('  => Article processed');
-    return story;
   });
 
 }
 
 // Step 2 - take articles and send to mercury API
 function getStories(articles) {
+
 
   let URL = 'https://mercury.postlight.com/parser?url=';
   let options = {
@@ -72,75 +90,62 @@ function getStories(articles) {
   };
 
   let stories = [];
+  let count = articles.length;
 
-  articles.forEach((article, i) => {
-
+  articles.forEach((article) => {
     options.url += article.link;
-
-    stories.push(new Promise(resolve => {
-      request( options, (err, response, b) => {
-        err && console.error('Mercury failed', err);
-        body = JSON.parse(b);
-        const story = sanitizeHTML(body.content, {
-          allowedTags: [],
-          allowedAttributes: []
-        });
-
-        console.log('  => Article processed');
-        const leadImgUrl = body.lead_image_url;
-        resolve( { leadImgUrl: leadImgUrl, content: story } );
-      });
-    }));
+    stories.push(fetchMercury(options));
     options.url = URL;
+    count--;
+    count === 0 ? console.log('Completed individual scrape from Mercury') : null;
   });
 
   return stories;
+
 }
 
-function getKeywords(bodies) {
-  let keywords = [];
-  bodies.forEach(body => {
-    keywords.push(g.extract(body, { score: true, limit: 5 }));
-    keywords.length === 0 ? err(new Error('Gramophone failed to find keywords')) : null;
-  });
+function getKeywords(body) {
+  keywords = g.extract(body, { score: true, limit: 5 });
+
+  // Fail moostly silently for now
+  keywords.length === 0 ? console.error('Gramophone failed to find keywords') : null;
+
   return keywords;
 }
 
-function getSentiment(stories) {
-  let sentiments = [];
-  stories.forEach(story => {
-    sentiments.push(s(story).comparative);
-  });
-  return sentiments;
+function getSentiment(body) {
+  return s(body).comparative;
 }
-
-const sources = [
-  // 'http://rss.cnn.com/rss/cnn_world.rss'
-  // 'http://globalnews.ca/feed/',
-  'http://feeds.foxnews.com/foxnews/world'
-  // 'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
-];
 
 function populateInitial(articles) {
   results = articles;
 }
 
-function populate(data) {
-  Object.keys(data).forEach((key) => {
-    data[key].forEach((value, i) => {
+function populate(props) {
+  Object.keys(props).forEach(key => {
+    props[key].forEach((value, i) => {
       results[i][key] = value;
     });
   });
 }
 
+let idx = 3;
 
-getFeeds(sources).forEach(feed => {
+for (let feed of getFeeds(sources)) {
 
   feed
     .then(rawArticles => {
+      console.log('  => sample: ');
+      console.log('\n');
+      console.log(rawArticles[idx]);
+      console.log('\n\n');
       return normalize(rawArticles);
     })
     .then(articles => {
+      console.log('Normalized data from feed');
+      console.log(' => sample:');
+      console.log('\n');
+      console.log(articles[idx]);
       populateInitial(articles);
       return getStories(articles);
     })
@@ -148,26 +153,15 @@ getFeeds(sources).forEach(feed => {
       Promise.all(bodies)
         .then(bodies => {
 
-          let content = [];
-          let leadImgUrl = [];
-
-          bodies.forEach(body => {
-            content.push(body.content);
-            leadImgUrl.push(body.leadImgUrl);
+          bodies.forEach((body, i) => {
+            results[i].content = body.content;
+            results[i].leadImgUrl = body.leadImgUrl;
+            results[i].sentiment = getSentiment(body.content);
+            results[i].keywords = getKeywords(body.content);
           });
 
-          let data = {
-            content: content,
-            leadImgUrl: leadImgUrl,
-            keywords: getKeywords(content),
-            sentiment: getSentiment(content)
-          };
-
-          populate(data);
-
-          console.log(results[0]);
-          console.log(results[5]);
-          console.log(results[10]);
+          console.log('\n\n Final results');
+          console.log(results[idx]);
 
         })
         .catch(err => {
@@ -177,6 +171,6 @@ getFeeds(sources).forEach(feed => {
     .catch(err => {
       console.error(err);
     });
-});
+}
 
 
