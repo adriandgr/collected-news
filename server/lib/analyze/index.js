@@ -6,15 +6,6 @@ s = require('sentiment');
 
 const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
-let db = [];
-
-const sources = [
-  'http://rss.cnn.com/rss/cnn_world.rss',
-  'http://globalnews.ca/feed/',
-  'http://feeds.foxnews.com/foxnews/world',
-  'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
-];
-
 // Step 1 - parse RSS feeds and resolve an array of articles from each source
 function getFeeds() {
   const rawFeeds = [];
@@ -22,13 +13,6 @@ function getFeeds() {
     rawFeeds.push(new Promise(resolve => {
       rss.parseURL(source, (err, parsed) => {
         err && console.error(err);
-        if(parsed.feed.title) {
-          console.log('\n\n');
-          console.log(parsed.feed.title);
-        } else {
-          console.error('\n\nRSS Feed (title not found)');
-        }
-        console.log('Found:', parsed.feed.entries.length, 'articles\n');
         resolve(parsed.feed.entries);
       });
     }));
@@ -60,13 +44,17 @@ function normalize(articles) {
 }
 
 
-// (called inside of Step 2)
+// Actually fetches from mercury (called inside of Step 2)
 function fetchMercury(options) {
 
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     request(options, (err, response, b) => {
       err && console.error('Mercury failed', err);
       body = JSON.parse(b);
+      let wordCount = body.word_count;
+      if(wordCount < 30) {
+        reject(`Discarded article - ${body.url} - word count too low`);
+      }
       const story = sanitizeHTML(body.content, {
         allowedTags: [],
         allowedAttributes: []
@@ -82,9 +70,12 @@ function fetchMercury(options) {
 
 }
 
-// Step 2 - take articles and send to mercury API
+// Step 2 - Takes array of articles and sends them to mercury API
 function getStories(articles) {
 
+  function done() {
+    console.log('Completed Mercury processing');
+  }
 
   let URL = 'https://mercury.postlight.com/parser?url=';
   let options = {
@@ -103,7 +94,7 @@ function getStories(articles) {
     stories.push(fetchMercury(options));
     options.url = URL;
     count--;
-    count === 0 ? console.log('Completed individual scrape from Mercury') : null;
+    count === 0 ? done() : null;
   });
 
   return stories;
@@ -112,10 +103,9 @@ function getStories(articles) {
 
 function getKeywords(body) {
   keywords = g.extract(body, { score: true, limit: 5 });
-
-  // Fail moostly silently for now
-  keywords.length === 0 ? keywords = ['Keywords not found'] : null;
-
+  if(keywords.length === 0) {
+    throw new Error('Keywords not found')
+  }
   return keywords;
 }
 
@@ -123,13 +113,15 @@ function getSentiment(body) {
   return s(body).comparative;
 }
 
-// function populate(props) {
-//   Object.keys(props).forEach(key => {
-//     props[key].forEach((value, i) => {
-//       feeds[i][key] = value;
-//     });
-//   });
-// }
+
+const sources = [
+  'http://rss.cnn.com/rss/cnn_world.rss',
+  'http://globalnews.ca/feed/',
+  'http://feeds.foxnews.com/foxnews/world',
+  'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
+];
+
+// Promise chain
 
 let sample = 3;
 
@@ -139,27 +131,15 @@ getFeeds(sources).forEach((feed, index) => {
 
   feed
     .then(rawArticles => {
-      // console.log('  => sample: ');
-      // console.log('\n');
-      // console.log(rawArticles[idx]);
-      // console.log('\n\n');
       return normalize(rawArticles);
     })
     .then(articles => {
-      // console.log('Nomralized data from feed');
-      // console.log(' => sample:');
-      // console.log('\n');
-      // console.log(articles[idx]);
       results = articles;
-      // console.log(articles);
-      // console.log(feeds);
       return getStories(articles);
     })
     .then(bodies => {
-
       Promise.all(bodies)
         .then(bodies => {
-
           bodies.forEach((body, i) => {
             if(results[i]) {
               results[i].id = i + 1;
@@ -170,18 +150,18 @@ getFeeds(sources).forEach((feed, index) => {
               results[i].keywords = getKeywords(body.content);
             }
           });
-
-          console.log('\n\n Final results\n');
-          console.log(' => Processed', results.length, 'articles\n');
-          console.log(results[sample]);
-
-
+          console.log('\n\nProcessed', results.length, 'articles from', results[0].source);
+          results.forEach(result => {
+            console.log('  =>', result.title);
+          });
         })
         .catch(err => {
+          // This will catch if mercury isn't happy
           console.error(err);
         });
     })
     .catch(err => {
+      // This catches anything that isn't happy
       console.error(err);
     });
 });
