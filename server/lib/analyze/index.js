@@ -25,10 +25,11 @@ function getFeeds() {
 function normalize(articles) {
   normalized = [];
   return new Promise((resolve, reject) => {
-    articles.forEach(article => {
+    articles.forEach((article, i) => {
       if(article.pubDate) {
         normalized.push(
           {
+            id: i + 1,
             title: article.title,
             link: article.link,
             pubDate: article.pubDate,
@@ -45,26 +46,26 @@ function normalize(articles) {
 
 
 // Actually fetches from mercury (called inside of Step 2)
-function fetchMercury(options) {
+function fetchMercury(options, articleId) {
 
   return new Promise((resolve, reject) => {
     request(options, (err, response, b) => {
       err && console.error('Mercury failed', err);
       body = JSON.parse(b);
-      let wordCount = body.word_count;
-      if(wordCount < 30) {
-        reject(`Discarded article - ${body.url} - word count too low`);
+
+      if(body.word_count < 50) {
+        console.log('Rejecting article (id:' + articleId + ') due to word-count');
+        reject(articleId);
       }
       const story = sanitizeHTML(body.content, {
         allowedTags: [],
         allowedAttributes: []
       });
-      const leadImgUrl = body.lead_image_url;
-      const source = body.domain;
-      resolve( {
-        source: source,
-        leadImgUrl: leadImgUrl,
-        content: story } );
+      resolve({
+        source: body.domain,
+        leadImgUrl: body.lead_image_url,
+        content: story
+      });
     });
   });
 
@@ -73,11 +74,8 @@ function fetchMercury(options) {
 // Step 2 - Takes array of articles and sends them to mercury API
 function getStories(articles) {
 
-  function done() {
-    console.log('Completed Mercury processing');
-  }
-
   let URL = 'https://mercury.postlight.com/parser?url=';
+
   let options = {
     url: URL,
     headers: {
@@ -87,14 +85,11 @@ function getStories(articles) {
   };
 
   let stories = [];
-  let count = articles.length;
 
   articles.forEach((article) => {
     options.url += article.link;
-    stories.push(fetchMercury(options));
+    stories.push(fetchMercury(options, article.id));
     options.url = URL;
-    count--;
-    count === 0 ? done() : null;
   });
 
   return stories;
@@ -104,7 +99,7 @@ function getStories(articles) {
 function getKeywords(body) {
   keywords = g.extract(body, { score: true, limit: 5 });
   if(keywords.length === 0) {
-    throw new Error('Keywords not found')
+    console.log('No keywords found');
   }
   return keywords;
 }
@@ -114,18 +109,20 @@ function getSentiment(body) {
 }
 
 
+const db = [];
+
 const sources = [
-  'http://rss.cnn.com/rss/cnn_world.rss',
-  'http://globalnews.ca/feed/',
-  'http://feeds.foxnews.com/foxnews/world',
-  'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
+  // 'http://rss.cnn.com/rss/cnn_topstories.rss' // XXX this source does not work
+  // 'http://globalnews.ca/feed/',
+  // 'http://feeds.foxnews.com/foxnews/world',
+  // 'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
 ];
 
 // Promise chain
 
 let sample = 3;
 
-getFeeds(sources).forEach((feed, index) => {
+getFeeds(sources).forEach(feed => {
 
   let results;
 
@@ -139,25 +136,47 @@ getFeeds(sources).forEach((feed, index) => {
     })
     .then(bodies => {
       Promise.all(bodies)
+        .catch(id => {
+          // Remove rejected articles
+          bodies.splice(id - 1, 1);
+          return bodies;
+        })
         .then(bodies => {
-          bodies.forEach((body, i) => {
-            if(results[i]) {
-              results[i].id = i + 1;
-              results[i].source = body.source;
-              results[i].content = body.content;
-              results[i].leadImgUrl = body.leadImgUrl;
-              results[i].sentiment = getSentiment(body.content);
-              results[i].keywords = getKeywords(body.content);
-            }
-          });
-          console.log('\n\nProcessed', results.length, 'articles from', results[0].source);
-          results.forEach(result => {
-            console.log('  =>', result.title);
-          });
+
+          Promise.all(bodies)
+            .then(bodies => {
+
+              // console.log(bodies);
+
+              bodies.forEach((body, i) => {
+                if(results[i]) {
+                  results[i].id = i + 1;
+                  results[i].source = body.source;
+                  results[i].content = body.content;
+                  results[i].leadImgUrl = body.leadImgUrl;
+                  results[i].sentiment = getSentiment(body.content);
+                  results[i].keywords = getKeywords(body.content);
+                }
+              })
+
+              console.log('\n\nProcessed', results.length, 'articles from', results[0].source);
+              results.forEach(result => {
+                console.log('  =>', result.title);
+              });
+
+              // console.log(results);
+
+              console.log('\nSample article:');
+              console.log(results[sample]);
+            })
+            .catch(id => {
+              // This catch is causing me grief
+              console.log('errors w/ this id:', id);
+            });
+
         })
         .catch(err => {
-          // This will catch if mercury isn't happy
-          console.error(err);
+          console.log(err);
         });
     })
     .catch(err => {
