@@ -1,6 +1,5 @@
 const [...sources] = require('./sources');
 const rss = require('./utils/rss');
-// const rss = require('rss-parser');
 const request = require('request');
 const sanitize = require('sanitize-html');
 gramophone = require('gramophone');
@@ -108,13 +107,13 @@ feeds.forEach(feed => {
 
   feed
     .then(entries => {
-      console.log(`\n\nFound ${entries.length} entries from feed`);
+      console.log(`\nFound ${entries.length} entries from feed`);
       return rss.normalize(entries);
     })
     .then(entries => {
       Promise.all(getArticles(entries))
         .then(data => {
-          console.log(`Processed ${data.length} entries via Mercury`);
+          console.log(`\nProcessed ${data.length} entries via Mercury`);
           if(entries.length !== data.length) {
             // TODO: Handle this
             console.log('+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+**+*+*+*+*+*+**+*+*+*+**+**+*+*+*+**+*+**+');
@@ -143,7 +142,7 @@ feeds.forEach(feed => {
               n++;
             }
           });
-          console.log(n, 'instances of bad data after guard');
+          console.log(`${n} instances of bad data after guard\n`);
           return data;
         })
         .then(data => {
@@ -155,13 +154,16 @@ feeds.forEach(feed => {
             entries[i].keywords = getKeywords(article);
           });
 
-          console.log(entries[sample]);
+          console.log(`${entries[sample].source} - completed processing`);
+          console.log(`  Sample:`);
+          console.log(`    => Title: ${entries[sample].title}`);
+          console.log(`    => Date: ${entries[sample].pubDate}`);
+          console.log(`    => Snippet: ${entries[sample].snippet}`);
 
-          console.log('All done');
           pending--;
           if(!pending) {
             let end = Date.now();
-            console.log(`Process took: ${(end - start) / 1000} seconds`);
+            console.log(`\nProcess took: ${(end - start) / 1000} seconds`);
           }
         })
         .catch(err => {
