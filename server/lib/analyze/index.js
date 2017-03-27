@@ -1,55 +1,14 @@
-const [...sources] = require('./sources');
-const rss = require('rss-parser');
 const request = require('request');
+const [...sources] = require('./sources');
+const rss = require('./utils/rss');
 const sanitize = require('sanitize-html');
 gramophone = require('gramophone');
 sentiment = require('sentiment');
 
 const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
-// Step 1 - parse RSS feeds and resolve an array of articles from each source
-function getFeeds() {
-  const feeds = [];
-  sources.forEach(source => {
-    feeds.push(
-      new Promise((resolve, reject) => {
-        rss.parseURL(source, (err, resulting) => {
-          err ? reject( { description: err } ) : resolve(resulting.feed.entries)
-        });
-      })
-    );
-  })
-  return feeds;
-}
-
-
-// Parses each article's data and makes it nicer to deal w/
-function normalize(articles) {
-  normalized = [];
-  return new Promise((resolve, reject) => {
-    articles.forEach((article, i) => {
-      if(article.pubDate) {
-        normalized.push(
-          {
-            id: i + 1,
-            title: article.title,
-            link: article.link,
-            pubDate: article.pubDate,
-            snippet: article.contentSnippet
-          }
-        );
-        resolve(normalized);
-      } else {
-        reject('Discarding article w/out published date');
-      }
-    });
-  });
-}
-
-
-
 function clean(content) {
-  return sanitize(content, { allowedTags: [], allowedAttributes: [] } )
+  return sanitize(content, { allowedTags: [], allowedAttributes: [] })
     .replace(/\n/g, '')
     .replace(/\s{2,}/g, '')
     .replace(/&.{4};/g, ' ');
@@ -123,19 +82,16 @@ function getArticles(entries) {
 
 function getKeywords(article) {
   keywords = gramophone.extract(article.content, { score: true, limit: 5 });
+
   if(keywords.length === 0) {
     console.log('\nNo keywords found');
     console.log('Debug');
     console.log(' => word count:', article.wordCount);
     console.log(' => success:', article.success + '\n');
   }
+
   return keywords;
 }
-
-function getSentiment(article) {
-  return sentiment(article.content).comparative;
-}
-
 
 // Promise chain
 
@@ -145,7 +101,7 @@ let pending = sources.length;
 const start = Date.now();
 const totalTime = [];
 
-let feeds = getFeeds(sources);
+let feeds = rss.parse(sources);
 
 feeds.forEach(feed => {
 
@@ -154,7 +110,7 @@ feeds.forEach(feed => {
   feed
     .then(entries => {
       console.log(`\n\nFound ${entries.length} entries from feed`);
-      return normalize(entries);
+      return rss.normalize(entries);
     })
     .then(entries => {
       Promise.all(getArticles(entries))
@@ -196,7 +152,7 @@ feeds.forEach(feed => {
             entries[i].source = article.source;
             entries[i].content = article.content;
             entries[i].leadImgUrl = article.leadImgUrl;
-            entries[i].sentiment = getSentiment(article);
+            entries[i].sentiment = sentiment(article.content).comparative;
             entries[i].keywords = getKeywords(article);
           });
 
