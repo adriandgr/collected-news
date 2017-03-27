@@ -1,6 +1,7 @@
-const request = require('request');
 const [...sources] = require('./sources');
 const rss = require('./utils/rss');
+// const rss = require('rss-parser');
+const request = require('request');
 const sanitize = require('sanitize-html');
 gramophone = require('gramophone');
 sentiment = require('sentiment');
@@ -8,7 +9,7 @@ sentiment = require('sentiment');
 const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
 function clean(content) {
-  return sanitize(content, { allowedTags: [], allowedAttributes: [] })
+  return sanitize(content, { allowedTags: [], allowedAttributes: [] } )
     .replace(/\n/g, '')
     .replace(/\s{2,}/g, '')
     .replace(/&.{4};/g, ' ');
@@ -82,14 +83,12 @@ function getArticles(entries) {
 
 function getKeywords(article) {
   keywords = gramophone.extract(article.content, { score: true, limit: 5 });
-
   if(keywords.length === 0) {
     console.log('\nNo keywords found');
     console.log('Debug');
     console.log(' => word count:', article.wordCount);
     console.log(' => success:', article.success + '\n');
   }
-
   return keywords;
 }
 
@@ -156,10 +155,9 @@ feeds.forEach(feed => {
             entries[i].keywords = getKeywords(article);
           });
 
-          entries.forEach(entry => {
-            console.log(`  => ${entry.title}`);
-          });
-          console.log('\n\n');
+          console.log(entries[sample]);
+
+          console.log('All done');
           pending--;
           if(!pending) {
             let end = Date.now();
