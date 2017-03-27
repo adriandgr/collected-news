@@ -1,12 +1,9 @@
-const [...sources] = require('./sources');
+const dotenv = require('dotenv').config();
+const g = require('gramophone');
+const s = require('sentiment');
+const mercury = require('./utils/mercury')(process.env.MERCURY_API_KEY);
 const rss = require('./utils/rss');
-const mercuryInstance = require('./utils/mercury');
-g = require('gramophone');
-s = require('sentiment');
-
-const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
-const mercury = new mercuryInstance(MERCURY_API_KEY);
-
+const [...sources] = require('./sources');
 
 const analyze = {
 
@@ -26,7 +23,6 @@ const analyze = {
   }
 
 };
-
 
 // Promise chain
 
