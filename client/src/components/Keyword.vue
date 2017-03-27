@@ -2,7 +2,7 @@
 
   <div class="card">
     <div class="image">
-      <img :src="hey" class="centered-and-cropped">
+      <img src="../assets/transparent.png" height="290px" class="centered-and-cropped" style="background-image: url('https://i.cbc.ca/1.3979788.1486992268!/cpImage/httpImage/image.jpg_gen/derivatives/4x3_620/trudeau-trump-20170213-topix.jpg');">
     </div>
     <div class="content">
     <div class="meta">
