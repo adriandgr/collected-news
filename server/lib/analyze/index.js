@@ -1,95 +1,32 @@
 const [...sources] = require('./sources');
 const rss = require('./utils/rss');
-const request = require('request');
-const sanitize = require('sanitize-html');
-gramophone = require('gramophone');
-sentiment = require('sentiment');
+const mercuryInstance = require('./utils/mercury');
+g = require('gramophone');
+s = require('sentiment');
 
 const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
-
-function clean(content) {
-  return sanitize(content, { allowedTags: [], allowedAttributes: [] } )
-    .replace(/\n/g, '')
-    .replace(/\s{2,}/g, '')
-    .replace(/&.{4};/g, ' ');
-}
-
-// Actually fetches from mercury (called inside of Step 2)
-function getContent(options, entry) {
-
-  return new Promise((resolve, reject) => {
-
-    request(options, (err, response, body) => {
-
-      let incoming = JSON.parse(body) || 0;
-
-      if(err || !incoming || !incoming.content) {
-        console.log('rejecting');
-        reject( { description: 'Mercury failed', data: { trace: err, entry: entry } } );
-      }
-
-      let content = clean(incoming.content);
-
-      // TODO
-      // Make this less hacky; there has got to be a better way
-      if(!incoming.word_count || incoming.word_count < 250) {
-        resolve({
-          success: false,
-          id: entry.id,
-          wordCount: incoming.word_count
-        });
-      }
-
-      resolve({
-        success: true,
-        source: incoming.domain,
-        leadImgUrl: incoming.lead_image_url,
-        content: content,
-        wordCount: incoming.word_count
-      });
-
-    });
-  });
-
-}
+const mercury = new mercuryInstance(MERCURY_API_KEY);
 
 
-// Step 2 - Takes array of articles and sends them to mercury API
+const analyze = {
 
-function getArticles(entries) {
-
-  let URL = 'https://mercury.postlight.com/parser?url=';
-
-  let options = {
-    url: URL,
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': MERCURY_API_KEY
+  keywords: article => {
+    keywords = g.extract(article.content, { score: true, limit: 5 });
+    if(keywords.length === 0) {
+      console.log('\nNo keywords found');
+      console.log('Debug');
+      console.log(' => word count:', article.wordCount);
+      console.log(' => success:', article.success + '\n');
     }
-  };
+    return keywords;
+  },
 
-  let articles = [];
-
-  entries.forEach(entry => {
-    options.url += entry.link;
-    articles.push(getContent(options, entry));
-    options.url = URL;
-  });
-
-  return articles;
-
-}
-
-function getKeywords(article) {
-  keywords = gramophone.extract(article.content, { score: true, limit: 5 });
-  if(keywords.length === 0) {
-    console.log('\nNo keywords found');
-    console.log('Debug');
-    console.log(' => word count:', article.wordCount);
-    console.log(' => success:', article.success + '\n');
+  sentiment: article => {
+    return s(article.content).comparative;
   }
-  return keywords;
-}
+
+};
+
 
 // Promise chain
 
@@ -111,7 +48,7 @@ feeds.forEach(feed => {
       return rss.normalize(entries);
     })
     .then(entries => {
-      Promise.all(getArticles(entries))
+      mercury.resolve(entries)
         .then(data => {
           console.log(`\nProcessed ${data.length} entries via Mercury`);
           if(entries.length !== data.length) {
@@ -150,8 +87,8 @@ feeds.forEach(feed => {
             entries[i].source = article.source;
             entries[i].content = article.content;
             entries[i].leadImgUrl = article.leadImgUrl;
-            entries[i].sentiment = sentiment(article.content).comparative;
-            entries[i].keywords = getKeywords(article);
+            entries[i].sentiment = analyze.sentiment(article);
+            entries[i].keywords = analyze.keywords(article);
           });
 
           console.log(`${entries[sample].source} - completed processing`);
@@ -159,12 +96,17 @@ feeds.forEach(feed => {
           console.log(`    => Title: ${entries[sample].title}`);
           console.log(`    => Date: ${entries[sample].pubDate}`);
           console.log(`    => Snippet: ${entries[sample].snippet}`);
+          console.log(`    => Sentiment: ${entries[sample].sentiment}`);
+          entries[sample].keywords.forEach(keyword => {
+            console.log(`    => Keyword: ${keyword.keyword} [${keyword.tf}]`);
+          });
 
           pending--;
           if(!pending) {
             let end = Date.now();
             console.log(`\nProcess took: ${(end - start) / 1000} seconds`);
           }
+
         })
         .catch(err => {
           pending--;
