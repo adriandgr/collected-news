@@ -1,23 +1,25 @@
+const [...sources] = require('./sources');
 const rss = require('rss-parser');
 const request = require('request');
-const sanitizeHTML = require('sanitize-html');
-g = require('gramophone');
-s = require('sentiment');
+const sanitize = require('sanitize-html');
+gramophone = require('gramophone');
+sentiment = require('sentiment');
 
 const MERCURY_API_KEY = 'VMBlkUzDGndnxyTLplKHzyNMdBg3pIWyMbuHkB19';
 
 // Step 1 - parse RSS feeds and resolve an array of articles from each source
 function getFeeds() {
-  const rawFeeds = [];
+  const feeds = [];
   sources.forEach(source => {
-    rawFeeds.push(new Promise(resolve => {
-      rss.parseURL(source, (err, parsed) => {
-        err && console.error(err);
-        resolve(parsed.feed.entries);
-      });
-    }));
-  });
-  return rawFeeds;
+    feeds.push(
+      new Promise((resolve, reject) => {
+        rss.parseURL(source, (err, resulting) => {
+          err ? reject( { description: err } ) : resolve(resulting.feed.entries)
+        });
+      })
+    );
+  })
+  return feeds;
 }
 
 
@@ -45,34 +47,57 @@ function normalize(articles) {
 }
 
 
+
+function clean(content) {
+  return sanitize(content, { allowedTags: [], allowedAttributes: [] } )
+    .replace(/\n/g, '')
+    .replace(/\s{2,}/g, '')
+    .replace(/&.{4};/g, ' ');
+}
+
 // Actually fetches from mercury (called inside of Step 2)
-function fetchMercury(options, articleId) {
+function getContent(options, entry) {
 
   return new Promise((resolve, reject) => {
-    request(options, (err, response, b) => {
-      err && console.error('Mercury failed', err);
-      body = JSON.parse(b);
 
-      if(body.word_count < 50) {
-        console.log('Rejecting article (id:' + articleId + ') due to word-count');
-        reject(articleId);
+    request(options, (err, response, body) => {
+
+      let incoming = JSON.parse(body) || 0;
+
+      if(err || !incoming || !incoming.content) {
+        console.log('rejecting');
+        reject( { description: 'Mercury failed', data: { trace: err, entry: entry } } );
       }
-      const story = sanitizeHTML(body.content, {
-        allowedTags: [],
-        allowedAttributes: []
-      });
+
+      let content = clean(incoming.content);
+
+      // TODO
+      // Make this less hacky; there has got to be a better way
+      if(!incoming.word_count || incoming.word_count < 250) {
+        resolve({
+          success: false,
+          id: entry.id,
+          wordCount: incoming.word_count
+        });
+      }
+
       resolve({
-        source: body.domain,
-        leadImgUrl: body.lead_image_url,
-        content: story
+        success: true,
+        source: incoming.domain,
+        leadImgUrl: incoming.lead_image_url,
+        content: content,
+        wordCount: incoming.word_count
       });
+
     });
   });
 
 }
 
+
 // Step 2 - Takes array of articles and sends them to mercury API
-function getStories(articles) {
+
+function getArticles(entries) {
 
   let URL = 'https://mercury.postlight.com/parser?url=';
 
@@ -84,106 +109,115 @@ function getStories(articles) {
     }
   };
 
-  let stories = [];
+  let articles = [];
 
-  articles.forEach((article) => {
-    options.url += article.link;
-    stories.push(fetchMercury(options, article.id));
+  entries.forEach(entry => {
+    options.url += entry.link;
+    articles.push(getContent(options, entry));
     options.url = URL;
   });
 
-  return stories;
+  return articles;
 
 }
 
-function getKeywords(body) {
-  keywords = g.extract(body, { score: true, limit: 5 });
+function getKeywords(article) {
+  keywords = gramophone.extract(article.content, { score: true, limit: 5 });
   if(keywords.length === 0) {
-    console.log('No keywords found');
+    console.log('\nNo keywords found');
+    console.log('Debug');
+    console.log(' => word count:', article.wordCount);
+    console.log(' => success:', article.success + '\n');
   }
   return keywords;
 }
 
-function getSentiment(body) {
-  return s(body).comparative;
+function getSentiment(article) {
+  return sentiment(article.content).comparative;
 }
 
 
-const db = [];
-
-const sources = [
-  // 'http://rss.cnn.com/rss/cnn_topstories.rss' // XXX this source does not work
-  // 'http://globalnews.ca/feed/',
-  // 'http://feeds.foxnews.com/foxnews/world',
-  // 'http://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009'
-];
-
 // Promise chain
 
-let sample = 3;
+const sample = 3;
 
-getFeeds(sources).forEach(feed => {
+let pending = sources.length;
+const start = Date.now();
+const totalTime = [];
 
-  let results;
+let feeds = getFeeds(sources);
+
+feeds.forEach(feed => {
+
+  let returns;
 
   feed
-    .then(rawArticles => {
-      return normalize(rawArticles);
+    .then(entries => {
+      console.log(`\n\nFound ${entries.length} entries from feed`);
+      return normalize(entries);
     })
-    .then(articles => {
-      results = articles;
-      return getStories(articles);
-    })
-    .then(bodies => {
-      Promise.all(bodies)
-        .catch(id => {
-          // Remove rejected articles
-          bodies.splice(id - 1, 1);
-          return bodies;
+    .then(entries => {
+      Promise.all(getArticles(entries))
+        .then(data => {
+          console.log(`Processed ${data.length} entries via Mercury`);
+          if(entries.length !== data.length) {
+            // TODO: Handle this
+            console.log('+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+**+*+*+*+*+*+**+*+*+*+**+**+*+*+*+**+*+**+');
+            console.log('Found discrepancy between number of parsed feed entries and number of parsed articles');
+            console.log('+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+**+*+*+*+*+*+**+*+*+*+**+**+*+*+*+**+*+**+');
+            throw 'a fit';
+          }
+          // Remove bad data
+          let i = data.length;
+          let n = 0;
+          while(i--) {
+            if(!data[i].success) {
+              data.splice(i, 1);
+              entries.splice(i, 1);
+              n++
+            }
+          }
+          console.log(`Removed ${n} articles due to bad data`);
+          return data;
         })
-        .then(bodies => {
+        .then(data => {
+          // For sake of sanity, a debug: check if there are any bad data still
+          let n = 0;
+          data.forEach(article => {
+            if(!article.success) {
+              n++;
+            }
+          });
+          console.log(n, 'instances of bad data after guard');
+          return data;
+        })
+        .then(data => {
+          data.forEach((article, i) => {
+            entries[i].source = article.source;
+            entries[i].content = article.content;
+            entries[i].leadImgUrl = article.leadImgUrl;
+            entries[i].sentiment = getSentiment(article);
+            entries[i].keywords = getKeywords(article);
+          });
 
-          Promise.all(bodies)
-            .then(bodies => {
-
-              // console.log(bodies);
-
-              bodies.forEach((body, i) => {
-                if(results[i]) {
-                  results[i].id = i + 1;
-                  results[i].source = body.source;
-                  results[i].content = body.content;
-                  results[i].leadImgUrl = body.leadImgUrl;
-                  results[i].sentiment = getSentiment(body.content);
-                  results[i].keywords = getKeywords(body.content);
-                }
-              })
-
-              console.log('\n\nProcessed', results.length, 'articles from', results[0].source);
-              results.forEach(result => {
-                console.log('  =>', result.title);
-              });
-
-              // console.log(results);
-
-              console.log('\nSample article:');
-              console.log(results[sample]);
-            })
-            .catch(id => {
-              // This catch is causing me grief
-              console.log('errors w/ this id:', id);
-            });
-
+          entries.forEach(entry => {
+            console.log(`  => ${entry.title}`);
+          });
+          console.log('\n\n');
+          pending--;
+          if(!pending) {
+            let end = Date.now();
+            console.log(`Process took: ${(end - start) / 1000} seconds`);
+          }
         })
         .catch(err => {
-          console.log(err);
+          pending--;
+          console.log('Promise.all catch');
+          console.error(err);
         });
     })
     .catch(err => {
-      // This catches anything that isn't happy
-      console.error(err);
+      console.log('Final catch');
+      err.description ? console.log(err.description) : console.log(err);
     });
 });
-
-
-
