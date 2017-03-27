@@ -2,7 +2,7 @@
 
   <div class="card">
     <div class="image">
-      <img src="../assets/transparent.png" height="290px" class="centered-and-cropped" style="background-image: url('https://i.cbc.ca/1.3979788.1486992268!/cpImage/httpImage/image.jpg_gen/derivatives/4x3_620/trudeau-trump-20170213-topix.jpg');">
+      <img src="../../assets/transparent.png" class="centered-and-cropped" :style="`background-image: url('${imgPath}');`">
     </div>
     <div class="content">
     <div class="meta">
@@ -28,15 +28,18 @@
 </template>
 
 <script>
+let data = {
+  hey: '../assets/chris.jpg'
+}
 export default {
   name: 'keyword',
   props: ['imgLink'],
-  data: {
-    hey: '../assets/chris.jpg'
+  data: function () {
+    return data
   },
   computed: {
     imgPath: function () {
-      return `../assets/${this.imgLink}`
+      return this.imgLink
     }
   }
 }
@@ -44,8 +47,9 @@ export default {
 
 <style scoped>
 .centered-and-cropped {
-  object-fit: cover;
-  width: 290px;
-  height: 260px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+
 }
 </style>

@@ -5,11 +5,13 @@
   </div>
   <div class="ui borderless main menu">
     <div class="ui text container">
+    <router-link to="/" class="item">
       <div href="#" class="header item">
-        <img class="logo" src="../assets/placeholder.png">
+        <img class="logo" src="../../assets/placeholder.png">
         Collected News
       </div>
-      <a href="#" class="item">Sources</a>
+      </router-link>
+      <router-link to="/sources" class="item">Sources</router-link>
       <a href="#" class="item">Articles</a>
       <a href="#" class="ui right floated dropdown item">
         Your <i class="dropdown icon"></i>
@@ -57,9 +59,7 @@ export default {
 </script>
 
 <style scoped>
-body {
-    background-color: #FFFFFF;
-  }
+
   .main.container {
     margin-top: 2em;
   }
@@ -79,25 +79,18 @@ body {
   }
   .main.menu .item img.logo {
     margin-right: 1.5em;
+    width: 100px;
   }
 
-  .overlay {
-    float: left;
-    margin: 0em 3em 1em 0em;
-  }
-  .overlay .menu {
-    position: relative;
-    left: 0;
-    transition: left 0.5s ease;
-  }
 
   .main.menu.fixed {
     background-color: #FFFFFF;
     border: 1px solid #DDD !important;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2) !important;
   }
-  .overlay.fixed .menu {
-    left: 800px;
+
+  .main.menu.fixed img.logo {
+    width: 50px;
   }
 
   .text.container .left.floated.image {
@@ -107,8 +100,4 @@ body {
     margin: 2em -4em 2em 2em;
   }
 
-  .ui.footer.segment {
-    margin: 5em 0em 0em;
-    padding: 5em 0em;
-  }
 </style>
