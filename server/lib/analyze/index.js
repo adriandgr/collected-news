@@ -3,9 +3,7 @@ const getFeeds        = require('./sources');
 const analyze         = require('./utils/analysis');
 const mercury         = require('./utils/mercury')(process.env.MERCURY_API_KEY);
 const rss             = require('./utils/rss');
-
-const start = Date.now();
-// let pending = sources.length;
+const db              = require('./db');
 
 // Pick an index to sample
 const sample = 3;
@@ -39,10 +37,10 @@ getFeeds((feeds, pending) => {
               entries[i].keywords = analyze.keywords(article);
             });
 
-            pending--;
+            db(entries);
 
-            if (pending === 0) {
-              console.log(entries);
+            if(pending--) {
+              console.log('Done');
             }
 
             })
