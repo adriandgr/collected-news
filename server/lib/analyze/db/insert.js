@@ -4,7 +4,6 @@ const ArticleKeyword = require('../../../models').ArticleKeyword
 
 module.exports = {
   keywords: entry => {
-    console.log(entry);
     const container = [];
     entry.keywords.forEach(keyword => {
       container.push(Promise.resolve(
@@ -18,15 +17,19 @@ module.exports = {
     return container;
   },
   article: entry => {
-    return Article.create({
-      title: entry.title,
-      pubDate: entry.pubDate,
-      link: entry.link,
-      leadImageUrl: entry.leadImgUrl,
-      snippet: entry.snippet,
-      content: entry.content,
-      sentiment: entry.sentiment,
-      sourceId: entry.sourceId
+    return Article.findOrCreate({
+      where: {
+        title: entry.title,
+        link: entry.link,
+        sourceId: entry.sourceId
+      },
+      defaults: {
+        leadImageUrl: entry.leadImgUrl,
+        pubDate: entry.pubDate,
+        snippet: entry.snippet,
+        content: entry.content,
+        sentiment: entry.sentiment,
+      }
     });
   },
   articleKeywords: (keywords, articleId) => {
