@@ -4,7 +4,7 @@
     {{makeSticky()}}
   </div>
   <div class="ui borderless main menu">
-    <div class="ui text container">
+    <div class="ui container">
     <router-link to="/" class="item">
       <div href="#" class="header item">
         <img class="logo" src="../../assets/placeholder.png">
@@ -13,24 +13,7 @@
       </router-link>
       <router-link to="/sources" class="item">Sources</router-link>
       <a href="#" class="item">Articles</a>
-      <a href="#" class="ui right floated dropdown item">
-        Your <i class="dropdown icon"></i>
-        <div class="menu">
-          <div class="item">Saved Articles</div>
-          <div class="item">Link Item</div>
-          <div class="divider"></div>
-          <div class="header">Header Item</div>
-          <div class="item">
-            <i class="dropdown icon"></i>
-            Sub Menu
-            <div class="menu">
-              <div class="item">Link Item</div>
-              <div class="item">Link Item</div>
-            </div>
-          </div>
-          <div class="item">Link Item</div>
-        </div>
-      </a>
+
     </div>
   </div>
   </nav>
@@ -68,6 +51,7 @@ export default {
   }
 
   .main.menu {
+    background-color: #f1f1f1;
     margin-top: 4em;
     border-radius: 0;
     border: none !important;

@@ -1,54 +1,84 @@
 <template>
-<div class="ui text container">
-  <div class="home">
-    <h1>{{ msg }}</h1>
-    <div class="ui link cards">
-      <Keyword img-link="https://i.cbc.ca/1.3979788.1486992268!/cpImage/httpImage/image.jpg_gen/derivatives/4x3_620/trudeau-trump-20170213-topix.jpg"></Keyword>
-      <Keyword img-link="http://www.radionz.co.nz/assets/news_crops/30615/eight_col_In_early_times_people_left_calling_cards_like_this.jpg?1490522058"></Keyword>
-      <Keyword img-link="http://www.irishtimes.com/polopoly_fs/1.3026785.1490638447!/image/image.jpg_gen/derivatives/landscape_620/image.jpg"></Keyword>
-      <Keyword img-link="https://i.cbc.ca/1.3980083.1487001846!/cpImage/httpImage/image.jpg_gen/derivatives/4x3_620/trump-is-canasa.jpg"></Keyword>
-      <Keyword img-link="https://i.cbc.ca/1.3981091.1487025592!/fileImage/httpImage/image.jpg_gen/derivatives/4x3_620/usa-trump-canada.jpg"></Keyword>
-      <Keyword img-link="something-else.jpg"></Keyword>
-      <Keyword img-link="something-else.jpg"></Keyword>
+<div class="ui center aligned container">
+
+  <div v-if="isLoading" class="no-articles">
+    <div class="ui active centered inline massive loader"></div>
+    <p>{{ fetchMsg }}</p>
+  </div>
+  <div v-else>
+    <transition name="fade">
+    <div v-if="hasArticles" class="ui three stackable link cards">
+      <Keyword v-for="article in articles" :article="article"></Keyword>
     </div>
 
+    <div v-else>
+      no articles
+    </div>
+    </transition>
   </div>
-  </div>
+
+</div>
 </template>
 
 <script>
 import Keyword from '@/components/partials/Keyword'
+import { mapActions } from 'vuex'
+import FetchStatus from '@/store/constants/fetch-status'
 
 export default {
   name: 'home',
-  components: {
-    Keyword
-  },
+  components: { Keyword },
   data () {
     return {
-      msg: 'Home View'
+      fetchMsg: 'waiting for articles ...',
+      try: 3,
+      show: true
+
     }
+  },
+  computed: {
+    articles () {
+      return this.$store.getters.articles.results
+    },
+    hasArticles () {
+      let len = this.$store.getters.articles.results.length
+      console.log(len, len > 0)
+      return len > 0
+    },
+    isLoading () {
+      return this.$store.getters.articles.status === FetchStatus.LOADING
+    },
+    ...mapActions([
+      'getArticles'
+    ])
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
+
+.fade-enter-to, .fade-leave-active {
+  transition: opacity 1s !important;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.no-articles {
+  color: #757575;
+  font-size: 2em;
+  margin-top: 6em;
+  margin-bottom: 12em;
 }
 
-li {
-  display: inline-block;
-  margin: 0 10px;
+.no-articles p {
+  margin-top: 1em;
+
 }
 
-a {
-  color: #42b983;
+.ui.link.cards {
+  margin-top: 4em;
+  margin-bottom: 12em;
 }
 </style>
