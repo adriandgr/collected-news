@@ -25,7 +25,10 @@ build/Release
 
 # Dependency directory
 node_modules
-vue/node_modules
+client/node_modules
+client/dist/
+client/npm-debug.log
+
 
 # Optional npm cache directory
 .npm
