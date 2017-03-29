@@ -50,7 +50,8 @@ const fakeData = { articles: [
 
 module.exports = (app) => {
   app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:8081')
+    // TODO: REMOVE THIS CORS RULE IN PRODUCTION!!! this is not secure
+    res.header('Access-Control-Allow-Origin', '*')
     Promise.resolve(next()).catch((ex) => {
       // handle error
       res.status(400);

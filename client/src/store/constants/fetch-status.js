@@ -11,4 +11,6 @@ const FetchStatus = consts([
   'COMPLETE'
 ])
 
+FetchStatus.APP_DOMAIN = 'http://localhost:8000'
+
 export default FetchStatus
