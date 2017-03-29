@@ -4,6 +4,7 @@ const ArticleKeyword = require('../../../models').ArticleKeyword
 
 module.exports = {
   keywords: entry => {
+    console.log(entry);
     const container = [];
     entry.keywords.forEach(keyword => {
       container.push(Promise.resolve(
