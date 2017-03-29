@@ -5,11 +5,12 @@ const ArticleKeyword = require('../../../models').ArticleKeyword
 module.exports = {
   keywords: entry => {
     const container = [];
+    console.log(entry);
     entry.keywords.forEach(keyword => {
       container.push(Promise.resolve(
         Keyword.findOrCreate({
           where: {
-            name: keyword.keyword
+            name: keyword.term
           }
         }
       )));
