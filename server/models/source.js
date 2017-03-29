@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Source = sequelize.define('Source', {
     name: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    description: DataTypes.STRING,
     link: DataTypes.STRING,
   }, {
     classMethods: {

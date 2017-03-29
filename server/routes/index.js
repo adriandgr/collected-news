@@ -14,6 +14,7 @@ module.exports = (app) => {
   app.post('/api/sources/:sourceId/articles/:articleId/', articleKeywordsController.create);
   app.post('/api/sources/:sourceId/articles', articlesController.create);
   app.post('/api/keywords', keywordsController.create);
+  app.get('/api/keywords', keywordsController.list);
   app.post('/api/sources', keywordSourcesController.create);
 
   app.all('/api', (req, res) => res.status(405).send({

@@ -1,4 +1,5 @@
 const Keyword = require('../models').Keyword;
+const keywords = require('./queries/keywords');
 
 module.exports = {
   create(req, res) {
@@ -10,9 +11,12 @@ module.exports = {
       .catch((err) => res.status(400).send(err));
   },
   list(req, res) {
-    return Keyword
-      .all()
-      .then((keywords) => res.status(200).send(keywords))
-      .catch((err) => res.status(400).send(err));
+    keywords.getData(data => {
+      res.json(data);
+    });
+    // return Keyword
+    //   .all()
+    //   .then((keywords) => res.status(200).send(keywords))
+    //   .catch((err) => res.status(400).send(err));
   },
 };

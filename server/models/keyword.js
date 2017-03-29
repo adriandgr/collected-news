@@ -5,14 +5,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     classMethods: {
       associate: (models) => {
-        Keyword.hasMany(models.ArticleKeyword, {
-          foreignKey: 'keywordId',
-          as: 'articleKeywords',
-        });
         Keyword.hasMany(models.KeywordSource, {
           foreignKey: 'keywordId',
           as: 'keywordSources',
         });
+        Keyword.belongsToMany(models.Article, {
+          through: 'ArticleKeywords',
+          foreignKey: 'keywordId'
+        })
       },
     },
   });

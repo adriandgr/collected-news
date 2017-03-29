@@ -1,47 +1,5 @@
 const insert = require('./insert');
 
-module.exports = entries => {
-  entries.forEach(entry => {
-    let n = 0;
-    let keywords = entry.keywords.map(keyword => {
-      return keyword;
-    });
-    Promise.all(insert.keywords(entry))
-      .then(rows => {
-        const keywordIds = rows.map(arr => {
-          let [row, changed] = arr;
-          if(changed){
-            n++;
-          }
-          return row.id;
-        });
-        keywords.forEach((keyword, i) => {
-          keyword.id = keywordIds[i];
-        })
-        return insert.article(entry)
-          .then(row => {
-            const articleId = row.id;
-            return Promise.resolve(articleId);
-          });
-      })
-      .then(articleId => {
-        return Promise.all(insert.articleKeywords(keywords, articleId));
-      })
-      .then(rows => {
-        const articleKeywordsIds = rows.map(row => { return row.id })
-        n && console.log(`Added ${n} unique keywords`);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  });
-};
-
-
-
-
-
-
 const entries = [{ sourceId: 1,
     title: 'Powerful cyclone slams into Australia\'s tropical northeast',
     link: 'http://feeds.foxnews.com/~r/foxnews/world/~3/oRFbVILHYY8/',
@@ -53,7 +11,7 @@ const entries = [{ sourceId: 1,
     sentiment: -0.02631578947368421,
     keywords: [{ keyword: 'positivity', tf: 8 },
   { keyword: 'lovely', tf: 6 },
-  { keyword: 'appreciation', tf: 4 },
+  { keyword: 'content', tf: 4 },
   { keyword: 'grace', tf: 4 },
   { keyword: 'redemption', tf: 3 }] },
   { sourceId: 3,
@@ -70,4 +28,35 @@ const entries = [{ sourceId: 1,
   { keyword: 'final', tf: 4 },
   { keyword: 'project', tf: 4 }] }];
 
+entries.forEach(entry => {
+  let keywords = entry.keywords.map(keyword => {
+    return keyword;
+  });
+  Promise.all(insert.keywords(entry))
+    .then(rows => {
+      const keywordIds = rows.map(row => {
+        let [row, ] = row;
+        return row.id;
+      });
+      keywords.forEach((keyword, i) => {
+        keyword.id = keywordIds[i];
+      })
+      return insert.article(entry)
+        .then(row => {
+          const articleId = row.id;
+          return Promise.resolve(articleId);
+        });
+    })
+    .then(articleId => {
+      return Promise.all(insert.articleKeywords(keywords, articleId));
+    })
+    .then(rows => {
+      const articleKeywordsIds = rows.map(row => { return row.id })
+      console.log(`Finished inserts for article: ${entry.title}`);
+      return;
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
 

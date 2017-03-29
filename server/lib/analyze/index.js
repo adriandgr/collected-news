@@ -40,7 +40,7 @@ getFeeds((feeds, pending) => {
             db(entries);
 
             if(pending--) {
-              console.log('Done');
+              console.log('Completed scrape');
             }
 
             })

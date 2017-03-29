@@ -6,9 +6,13 @@ module.exports = {
   keywords: entry => {
     const container = [];
     entry.keywords.forEach(keyword => {
-      container.push(Promise.resolve(Keyword.create({
-        name: keyword.keyword
-      })));
+      container.push(Promise.resolve(
+        Keyword.findOrCreate({
+          where: {
+            name: keyword.keyword
+          }
+        }
+      )));
     })
     return container;
   },
@@ -27,11 +31,13 @@ module.exports = {
   articleKeywords: (keywords, articleId) => {
     const container = [];
     keywords.forEach(keyword => {
-      container.push(Promise.resolve(ArticleKeyword.create({
-        keywordId: keyword.id,
-        articleId: articleId,
-        frequency: keyword.tf
-      })));
+      container.push(Promise.resolve(
+        ArticleKeyword.create({
+          keywordId: keyword.id,
+          articleId: articleId,
+          frequency: keyword.tf
+        }
+      )));
     });
     return container;
   }
