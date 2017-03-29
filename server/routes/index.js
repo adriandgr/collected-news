@@ -50,6 +50,7 @@ const fakeData = { articles: [
 
 module.exports = (app) => {
   app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8081')
     Promise.resolve(next()).catch((ex) => {
       // handle error
       res.status(400);

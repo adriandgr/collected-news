@@ -8,13 +8,15 @@ export const getArticles = ({ commit, state }) => {
     commit('getArticles')
   }, 3000)
 
-  axios.get('http://localhost:8000/api/faking')
+  axios.get('http://localhost:8000/api/keywords')
   .then(function (response) {
     clearTimeout(timeoutId)
-    response.data.articles.forEach(article => {
+    response.data.forEach(article => {
       const entry = state.articles.results.find(entry => {
+        console.log(article.id)
         return entry.id === article.id
       })
+      console.log('entry', entry)
       if (!entry) {
         state.articles.results.push(article)
       }
