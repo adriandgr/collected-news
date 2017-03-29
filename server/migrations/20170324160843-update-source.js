@@ -2,7 +2,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     queryInterface.addColumn('Sources', 'description', {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     });
   },
 

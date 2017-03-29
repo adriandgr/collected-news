@@ -39,10 +39,10 @@ module.exports = (sequelize, DataTypes) => {
           foreignKey: 'sourceId',
           onDelete: 'CASCADE',
         });
-        Article.hasMany(models.ArticleKeyword, {
+        Article.belongsToMany(models.Keyword, {
+          through: 'ArticleKeywords',
           foreignKey: 'articleId',
-          as: 'articleKeywords',
-        });
+        })
       },
     },
   });
