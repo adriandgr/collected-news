@@ -42,7 +42,6 @@ export default {
     },
     hasArticles () {
       let len = this.$store.getters.articles.results.length
-      console.log(len, len > 0)
       return len > 0
     },
     isLoading () {

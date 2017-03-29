@@ -13,10 +13,10 @@ export const getArticles = ({ commit, state }) => {
     clearTimeout(timeoutId)
     response.data.forEach(article => {
       const entry = state.articles.results.find(entry => {
-        console.log(article.id)
+        //console.log(article.id)
         return entry.id === article.id
       })
-      console.log('entry', entry)
+      //console.log('entry', entry)
       if (!entry) {
         state.articles.results.push(article)
       }
