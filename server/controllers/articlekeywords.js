@@ -1,16 +1,6 @@
 const ArticleKeyword = require('../models').ArticleKeyword;
 
 module.exports = {
-  create(req, res) {
-    return ArticleKeyword
-      .create({
-        articleId: req.body.articleId,
-        keywordId: req.body.keywordId,
-        frequency: req.body.frequency,
-      })
-      .then((articleKeyword) => res.status(201).send(articleKeyword))
-      .catch((err) => res.status(400).send(err));
-  },
   list(req, res) {
     return ArticleKeyword
       .all()

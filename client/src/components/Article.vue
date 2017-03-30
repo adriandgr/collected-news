@@ -1,15 +1,24 @@
 <template>
   <div class="ui text container">
-  <p><em>keword:</em> {{ thisArticle.keyword }}</p>
+<!--   <p><em>keword:</em> {{ thisArticle.keyword }}</p> -->
   <div v-if="thisArticle" class="ui raised segment article-content">
 
-<h4 class="ui header">With metadata</h4>
-<p>A progress bar can be initialized with metadata</p>
-<div class="ui teal progress" data-percent="74" id="example1">
-  <div class="bar"></div>
-  <div class="label">74% Funded</div>
-</div>
+  <table>
+    <tr>
+      <td>
+        <div :class="articleSentiment < 0 ? 'ui red tiny progress flipped' : 'ui disabled tiny progress flipped'" :data-percent="articleSentiment < 0 ? Math.abs(articleSentiment)-1 : 99" id="example1">
+          <div class="bar" v-progress></div>
+        </div>
+      </td>
 
+      <td>
+        <div :class="articleSentiment >= 0 ? 'ui green tiny progress' : 'ui disabled tiny progress'" :data-percent="articleSentiment >= 0 ? articleSentiment : 99" id="example2">
+          <div class="bar"v-progress></div>
+        </div>
+      </td>
+    </tr>
+  </table>
+<div class="sentiment-score">sentiment score: {{articleSentiment}}</div>
 
     <h1>{{ thisArticle.title }}</h1>
 
@@ -37,12 +46,13 @@ export default {
     articles () {
       return this.$store.getters.articles.results
     },
-    articleIds () {
-      let ids = []
-      this.$store.getters.articles.results.forEach(a => {
-        ids.push(a.id)
-      })
-      return ids
+    articleSentiment () {
+      let article = this.thisArticle
+      console.log('art!',article)
+      if (!article) {
+        return
+      }
+      return (Math.ceil(article.sentiment*1000) > 100 || Math.ceil(article.sentiment*1000) < -100 ? 100 * (Math.ceil(article.sentiment/Math.abs(article.sentiment))) : Math.ceil(article.sentiment*1000))
     },
     thisArticle () {
       const article = this.$store.getters.articles.results.find(a => {
@@ -63,18 +73,32 @@ export default {
         keyword: article.name
       }
     }
-  },
-  mounted: function () {
-    this.$nextTick(function () {
-      // code that assumes this.$el is in-document
-      $('#example1').progress();
-    })
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.sentiment-score {
+  float: right;
+  transform: translate(-5px, -15px);
+}
+
+table {
+    width: 100%;
+}
+.flipped {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+
+
 .article-content {
   padding: 50px !important;
 
