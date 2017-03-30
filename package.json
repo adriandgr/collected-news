@@ -14,7 +14,6 @@
     "body-parser": "^1.15.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
-    "gramophone": "0.0.3",
     "morgan": "^1.7.0",
     "pg": "^6.0.2",
     "pg-hstore": "^2.3.2",

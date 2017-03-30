@@ -1,4 +1,4 @@
-const g = require('gramophone');
+const g = require('./gramophone');
 const s = require('sentiment');
 
 const analyze = {
