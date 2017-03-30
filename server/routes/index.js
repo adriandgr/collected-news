@@ -63,11 +63,19 @@ module.exports = (app) => {
     message: 'Welcome to the Todos API!',
   }));
 
-  app.get('/api/sources', sourcesController.list);
-  app.get('/api/articles/:id', articlesController.find);
+  // Sources
+  app.get('/api/sources', sourcesController.index);
+  app.get('/api/sources/:id', sourcesController.individual);
 
-  app.get('/api/keywords', keywordsController.list);
+  // Keywords
+  app.get('/api/keywords', keywordsController.index);
+  app.get('/api/keywords/all', keywordsController.all);
+  app.get('/api/keywords/:keyword', keywordsController.individual);
 
+  // Articles
+  app.get('/api/articles', articlesController.index);
+  app.get('/api/articles/all', articlesController.all);
+  app.get('/api/articles/:id', articlesController.individual);
 
   app.all('/api', (req, res) => res.status(405).send({
     message: 'Method Not Allowed',

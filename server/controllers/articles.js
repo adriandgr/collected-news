@@ -1,7 +1,10 @@
 const Article = require('../models').Article;
 
 module.exports = {
-  list(req, res) {
+  index(req, res) {
+    res.json({ status: 'not yet built '});
+  },
+  all(req, res) {
     return Article
       .all()
       .then((article) => res.status(200).send(article))
@@ -24,4 +27,11 @@ module.exports = {
       })
       .catch((err) => res.status(404).send(err));
   },
+  individual(req, res) {
+    const id = req.params.id;
+    return Article
+      .findById(id)
+      .then(article => res.json(article))
+      .catch(err => console.error(err));
+  }
 };
