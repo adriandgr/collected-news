@@ -12,7 +12,12 @@
       </router-link>
       <router-link to="/sources" class="item">Sources</router-link>
       <a href="#" class="item">Articles</a>
-
+      <div class="item">
+      <div class="ui icon input">
+        <input type="text" placeholder="Search...">
+        <i class="search link icon"></i>
+      </div>
+    </div>
     </div>
   </div>
   </nav>

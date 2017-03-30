@@ -22,10 +22,16 @@
 
     <h1>{{ thisArticle.title }}</h1>
 
+<img :src="thisArticle.leadImageUrl" class="leadArticleImg">
+
+<br><br>
     <p>
-      <img :src="thisArticle.leadImageUrl" class="leadArticleImg">
-      {{ thisArticle.content }}
+
+      {{ firstParagraph }}
     </p>
+
+
+    <p v-for="p in restOfContent" > {{p}}</p>
 </div>
 
 
@@ -53,6 +59,15 @@ export default {
         return
       }
       return (Math.ceil(article.sentiment*1000) > 100 || Math.ceil(article.sentiment*1000) < -100 ? 100 * (Math.ceil(article.sentiment/Math.abs(article.sentiment))) : Math.ceil(article.sentiment*1000))
+    },
+    articleContent () {
+      return JSON.parse(this.thisArticle.content)
+    },
+    firstParagraph () {
+      return this.articleContent[0]
+    },
+    restOfContent() {
+      return this.articleContent.splice(1)
     },
     thisArticle () {
       const article = this.$store.getters.articles.results.find(a => {
@@ -108,9 +123,8 @@ table {
   font-size: 1.1em;
 }
 .leadArticleImg {
-  margin-right: 20px;
-  margin-bottom: 20px;
-  width: 400px;
+  margin: 10px 20px 40px 0;
+  width: 100%;
   float: left;
 }
 
