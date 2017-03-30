@@ -7,15 +7,19 @@ import router from './router'
 import '../semantic/dist/semantic.min.css'
 import semantic from 'semantic' // importing semantic js
 
+Vue.directive('progress', {
+  // When the bound element is inserted into the DOM...
+  inserted: function (el) {
+    $('#example1').progress()
+    $('#example2').progress()
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   store,
   router,
   template: '<App/>',
-  components: { App },
-  mounted: function () {
-    $('.ui.accordion')
-    	.accordion();
-  }
+  components: { App }
 })

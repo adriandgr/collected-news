@@ -1,5 +1,5 @@
 <template>
-    <div :class="(article.sentiment > -0.1 && article.sentiment < 0.1 ) ? 'ui grey centered card' : (article.sentiment > 0 ? 'ui olive centered card' : 'ui red centered card')">
+    <div :class="(article.sentiment > -0.01 && article.sentiment < 0.01 ) ? 'ui grey centered card' : (article.sentiment > 0 ? 'ui green centered card' : 'ui red centered card')">
       <router-link :to="`/article/${article.id}`" class="image">
         <img src="../../assets/transparent.png" class="centered-and-cropped" :style="`background-image: url('${article.leadImageUrl}');`">
       </router-link>
@@ -15,11 +15,13 @@
       </div>
       <div class="extra content">
         <span class="right floated">
-
+         <a :href="article.link">
+         <i class="chain icon"></i> source
+         </a>
         </span>
-        <span>
-          <i :class="(article.sentiment > -0.1 && article.sentiment < 0.1 ) ? 'meh icon' : (article.sentiment > 0 ? 'smile icon' : 'frown icon')"></i>
-          {{(article.sentiment > -0.1 && article.sentiment < 0.1 ) ? 'mostly neutral' : (article.sentiment > 0 ? 'mostly positive' : 'mostly negative')}}
+        <span style="float: left">
+          <i :class="(article.sentiment > -0.01 && article.sentiment < 0.01 ) ? 'meh icon' : (article.sentiment > 0 ? 'smile icon' : 'frown icon')"></i>
+          {{(article.sentiment > -0.01 && article.sentiment < 0.01 ) ? 'mostly neutral' : (article.sentiment > 0 ? 'mostly positive' : 'mostly negative')}}
         </span>
       </div>
     </div>

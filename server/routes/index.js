@@ -62,18 +62,11 @@ module.exports = (app) => {
   app.get('/api', (req, res) => res.status(200).send({
     message: 'Welcome to the Todos API!',
   }));
-  app.post('/api/sources', sourcesController.create);
-  app.get('/api/sources', sourcesController.list);
-  app.get('/api/faking', (req, res) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:8081')
-    res.status(200).send(fakeData);
-  });
 
-  app.post('/api/sources/:sourceId/articles/:articleId/', articleKeywordsController.create);
-  app.post('/api/sources/:sourceId/articles', articlesController.create);
-  app.post('/api/keywords', keywordsController.create);
+  app.get('/api/sources', sourcesController.list);
+  app.get('/api/articles/:id', articlesController.find);
+
   app.get('/api/keywords', keywordsController.list);
-  app.post('/api/sources', keywordSourcesController.create);
 
   app.all('/api', (req, res) => res.status(405).send({
     message: 'Method Not Allowed',
