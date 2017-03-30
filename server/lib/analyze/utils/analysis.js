@@ -3,7 +3,7 @@ const s = require('sentiment');
 
 const analyze = {
   keywords: article => {
-    keywords = g.extract(article.content, { score: true, limit: 5 });
+    keywords = g.extract(article.content.body, { score: true, limit: 5 });
     if(keywords.length === 0) {
       console.log('\nNo keywords found');
       console.log('Debug');
@@ -13,7 +13,7 @@ const analyze = {
     return keywords;
   },
   sentiment: article => {
-    return s(article.content).comparative;
+    return s(article.content.body).comparative;
   }
 };
 

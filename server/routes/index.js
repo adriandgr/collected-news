@@ -66,7 +66,15 @@ module.exports = (app) => {
   app.get('/api/sources', sourcesController.list);
   app.get('/api/articles/:id', articlesController.find);
 
+<<<<<<< HEAD
   app.get('/api/keywords', keywordsController.list);
+=======
+  app.post('/api/sources/:sourceId/articles/:articleId/', articleKeywordsController.create);
+  app.post('/api/sources/:sourceId/articles', articlesController.create);
+  app.get('/api/keywords', keywordsController.list);
+  app.get('/api/keywords/:keyword', keywordsController.individual);
+  app.post('/api/sources', keywordSourcesController.create);
+>>>>>>> 498f57fd684335fe23810c0a093926c0a4bf0d00
 
   app.all('/api', (req, res) => res.status(405).send({
     message: 'Method Not Allowed',
