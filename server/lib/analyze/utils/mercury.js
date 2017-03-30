@@ -16,10 +16,18 @@ class Mercury {
 }
 
 Mercury.prototype.clean = function(content) {
-  return sanitize(content, { allowedTags: [], allowedAttributes: [] } )
+  let body = sanitize(content, { allowedTags: ['p'], allowedAttributes: [] } )
     .replace(/\n/g, '')
     .replace(/\s{2,}/g, '')
     .replace(/&.{4};/g, ' ');
+  const paras = [];
+  body.split('<p>').join('').split('</p>')
+    .forEach(p => {
+      chars = /[a-zA-Z]+/g.test(p);
+      chars && paras.push(p);
+    });
+  body = sanitize(body, { allowedTags: []});
+  return { body: body, paragraphs: paras };
 };
 
 Mercury.prototype.resolve = function(entries) {
