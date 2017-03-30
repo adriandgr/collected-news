@@ -26,3 +26,29 @@ export const getArticles = ({ commit, state }) => {
     console.log(error)
   })
 }
+
+export const getSources = ({ commit, state }) => {
+  state.sources.status = FetchStatus.LOADING
+  const timeoutId = setTimeout(() => {
+    state.sources.status = FetchStatus.COMPLETE
+    commit('getSources')
+  }, 3000)
+
+  axios.get('http://localhost:8000/api/sources')
+  .then(function (response) {
+    clearTimeout(timeoutId)
+    response.data.forEach(source => {
+      const entry = state.sources.results.find(entry => {
+        return entry.id === source.id
+      })
+      if (!entry) {
+        state.sources.results.push(source)
+      }
+    })
+    state.sources.status = FetchStatus.COMPLETE
+    commit('getSources')
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
+}

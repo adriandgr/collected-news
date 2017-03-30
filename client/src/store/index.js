@@ -11,6 +11,10 @@ const state = {
   articles: {
     status: FetchStatus.INIT,
     results: []
+  },
+  sources: {
+    status: FetchStatus.INIT,
+    results: []
   }
 }
 

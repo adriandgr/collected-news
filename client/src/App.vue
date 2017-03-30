@@ -18,10 +18,12 @@ export default {
     Foot
   },
   methods: mapActions([
-    'getArticles'
+    'getArticles',
+    'getSources'
   ]),
   created () {
-    this.getArticles()
+    this.getArticles(),
+    this.getSources()
   }
 }
 </script>
