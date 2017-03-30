@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
           foreignKey: 'keywordId',
           as: 'keywordSources',
         });
+        Keyword.hasMany(models.ArticleKeyword, {
+          foreignKey: 'keywordId'
+        })
         Keyword.belongsToMany(models.Article, {
           through: 'ArticleKeywords',
           foreignKey: 'keywordId'
