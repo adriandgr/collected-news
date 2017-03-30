@@ -33,7 +33,6 @@ export default {
       fetchMsg: 'waiting for articles ...',
       try: 3,
       show: true
-
     }
   },
   computed: {
