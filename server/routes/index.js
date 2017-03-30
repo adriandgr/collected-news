@@ -84,7 +84,7 @@ module.exports = (app) => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8081')
     res.status(200).send(fakeData);
   });
-
+  
   app.all('/api', (req, res) => res.status(405).send({
     message: 'Method Not Allowed',
   }));
