@@ -1,7 +1,6 @@
 <template>
 <nav>
   <div class="menu-spacer">
-    {{makeSticky()}}
   </div>
   <div class="ui borderless main menu">
     <div class="ui container">
@@ -22,8 +21,9 @@
 <script>
 export default {
   name: 'navBar',
-  methods: {
-    makeSticky: function () {
+  mounted: function () {
+    this.$nextTick(function () {
+      // code that assumes this.$el is in-document
       $(document)
         .ready(function() {
           // fix main menu to page on passing
@@ -34,9 +34,8 @@ export default {
           $('.main.menu  .ui.dropdown').dropdown({
             on: 'hover'
           });
-        })
-      ;
-    }
+        });
+    })
   }
 }
 </script>

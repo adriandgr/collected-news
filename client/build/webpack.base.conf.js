@@ -91,6 +91,10 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
+      // semantic-ui | TODO : is usefull since we import it
+      semantic: 'semantic-ui-css',
+      Semantic: 'semantic-ui-css',
+      'semantic-ui': 'semantic-ui-css'
     })
   ]
 }

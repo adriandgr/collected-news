@@ -5,7 +5,7 @@ import store from './store'
 import App from './App'
 import router from './router'
 import '../semantic/dist/semantic.min.css'
-import 'semantic' // importing semantic js
+import semantic from 'semantic' // importing semantic js
 
 /* eslint-disable no-new */
 new Vue({

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Sources from '@/components/Sources'
+import Article from '@/components/Article'
 
 Vue.use(Router)
 
@@ -15,6 +16,10 @@ export default new Router({
       path: '/sources',
       name: 'Sources',
       component: Sources
+    }, {
+      path: '/article/:id',
+      name: 'Article',
+      component: Article
     }
   ]
 })
