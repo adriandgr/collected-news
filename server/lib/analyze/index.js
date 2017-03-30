@@ -35,7 +35,8 @@ getFeeds(feeds => {
               entries[i].keywords = analyze.keywords(article);
             });
 
-            console.log('Scraped and proccessed data from', entries[sample].source);
+            console.log('Scraped and proccessed data from source:', entries[sample].source);
+
             insert(entries);
 
             })

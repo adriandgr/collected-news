@@ -5,7 +5,6 @@ const ArticleKeyword = require('../../../models').ArticleKeyword
 module.exports = {
   keywords: entry => {
     const container = [];
-    console.log(entry);
     entry.keywords.forEach(keyword => {
       container.push(Promise.resolve(
         Keyword.findOrCreate({
@@ -37,10 +36,14 @@ module.exports = {
     const container = [];
     keywords.forEach(keyword => {
       container.push(Promise.resolve(
-        ArticleKeyword.create({
-          keywordId: keyword.id,
-          articleId: articleId,
-          frequency: keyword.tf
+        ArticleKeyword.findOrCreate({
+          where: {
+            keywordId: keyword.id,
+            articleId: articleId,
+          },
+          defaults: {
+            frequency: keyword.tf
+          }
         }
       )));
     });
