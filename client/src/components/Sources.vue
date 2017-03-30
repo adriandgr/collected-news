@@ -1,30 +1,33 @@
 <template>
-  <div class="ui text container">
+  <div class="ui raised container segment">
+    <h2 class="ui header"> Sources </h2>
 
-  <div v-if="isLoading" class="no-sources">
-    <div class="ui active centered inline massive loader"></div>
-    <p>{{ fetchMsg }}</p>
-  </div>
-  <div v-else>
-    <transition name="fade">
-    <div v-if="hasSources" class="ui three stackable link cards">
-      <div v-for="source in sources" :source="source"></div>
-    </div>
+      <div v-if="isLoading" class="no-sources">
+        <div class="ui active centered inline massive loader"></div>
+        <p>{{ fetchMsg }}</p>
+        </div>
+      <div v-else>
 
-    <div v-else>
-      no sources
+
+      <div v-if="hasSources" class="three wide column">
+        <Source v-for="source in sources" :source="source"></Source>
+      </div>
+      <div v-else>
+        no sources
+      </div>
+
     </div>
-    </transition>
-  </div>
   </div>
 </template>
 
 <script>
+import Source from '@/components/partials/Source'
 import { mapActions } from 'vuex'
 import FetchStatus from '@/store/constants/fetch-status'
 
 export default {
   name: 'sources',
+  components: { Source },
   data () {
     return {
       fetchMsg: 'waiting for sources ...',
@@ -38,7 +41,6 @@ export default {
     },
     hasSources () {
       let len = this.$store.getters.sources.results.length
-      console.log(len, len > 0)
       return len > 0
     },
     isLoading () {
@@ -53,23 +55,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 
 .no-sources {
   color: #757575;
@@ -87,5 +72,4 @@ a {
   margin-top: 4em;
   margin-bottom: 12em;
 }
-
 </style>
