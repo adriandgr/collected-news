@@ -15,6 +15,10 @@ const state = {
   sources: {
     status: FetchStatus.INIT,
     results: []
+  },
+  keywords: {
+    status: FetchStatus.INIT,
+    results: []
   }
 }
 

@@ -12,20 +12,70 @@
       </router-link>
       <router-link to="/sources" class="item">Sources</router-link>
       <a href="#" class="item">Articles</a>
-      <div class="item">
-      <div class="ui icon input">
-        <input type="text" placeholder="Search...">
-        <i class="search link icon"></i>
-      </div>
+
+      <div class="floated right item">
+        <div class="ui right action left icon input">
+          <i class="search icon"></i>
+          <input
+            type="text"
+            placeholder="Search"
+            @keyup.enter="hit"
+            @blur="reset"
+            @input="searching"
+            v-model="searchTerm">
+          <div class="ui basic floating dropdown button" id="search-by">
+            <div class="text">by</div>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div class="item" data-value="keyword">keyword</div>
+              <div class="item" data-value="article">article</div>
+              <div class="item" data-value="source">source</div>
+            </div>
+          </div>
+        </div>
     </div>
     </div>
   </div>
+
   </nav>
 </template>
 
 <script>
 export default {
   name: 'navBar',
+  data() {
+    return {
+      searchTerm: '',
+      loading: false,
+      keys: this.$store.getters.keywords.results
+    }
+  },
+  computed: {
+    keywords() {
+      return this.$store.getters.keywords.results
+    }
+  },
+  methods: {
+    hit () {
+      this.$router.push({ name: 'keyword', params: { id: this.searchTerm }})
+      this.searchTerm = ''
+      console.log('search by', $('#search-by').dropdown('get value'))
+
+    },
+    reset () {
+      this.searchTerm = ''
+    },
+    searching () {
+      if (!this.loading) {
+        this.loading = true
+        $('.ui.right.action.left.icon.input').addClass('loading')
+        setTimeout(()=>{
+          $('.ui.right.action.left.icon.input').removeClass('loading')
+          this.loading = false
+        },800)
+      }
+    }
+  },
   mounted: function () {
     this.$nextTick(function () {
       // code that assumes this.$el is in-document
@@ -37,8 +87,32 @@ export default {
           });
           // show dropdown on hover
           $('.main.menu  .ui.dropdown').dropdown({
-            on: 'hover'
+            on: 'click'
           });
+          var content = this
+
+          $('.ui.search')
+            .search({
+              source : content,
+              searchFields   : [
+                'name'
+              ],
+              searchFullText: false
+            })
+          ;
+
+          //   .search({
+          //     apiSettings: {
+          //       url: '//localhost:8000/api/articles/{query}'
+          //     },
+          //     fields: {
+          //       results : 'title',
+          //       title   : 'title'
+          //     },
+          //     minCharacters : 1
+          //   })
+          // ;
+
         });
     })
   }

@@ -4,3 +4,6 @@ export const getArticles = state => {
 export const getSources = state => {
   state.sources
 }
+export const getKeywords = state => {
+  state.keywords
+}
