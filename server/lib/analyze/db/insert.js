@@ -1,6 +1,7 @@
-const Keyword = require('../../../models').Keyword;
-const Article = require('../../../models').Article;
-const ArticleKeyword = require('../../../models').ArticleKeyword
+const {Keyword} = require('../../../models');
+const {Article} = require('../../../models');
+const {ArticleKeyword} = require('../../../models');
+
 
 module.exports = {
   keywords: entry => {
@@ -17,6 +18,7 @@ module.exports = {
     return container;
   },
   article: entry => {
+
     return Article.findOrCreate({
       where: {
         title: entry.title,

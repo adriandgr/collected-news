@@ -14,7 +14,7 @@ const analyze = {
   },
   sentiment: article => {
     return s(article.content.body).comparative;
-  }
+  },
 };
 
 module.exports = analyze;
