@@ -56,31 +56,39 @@ export const getSources = ({ commit, state }) => {
 }
 
 export const getKeywords = ({ commit, state }) => {
-  state.keywords.status = FetchStatus.LOADING
-  const timeoutId = setTimeout(() => {
-    state.keywords.status = FetchStatus.COMPLETE
-    commit('getKeywords')
-  }, 3000)
+  return new Promise((resolve, reject) => {
+    state.keywords.status = FetchStatus.LOADING
 
-  axios.get('http://localhost:8000/api/keywords/all')
-  .then(function (response) {
-    clearTimeout(timeoutId)
-    response.data.forEach(keyword => {
-      const entry = state.keywords.results.find(entry => {
-        return entry.id === keyword.id
+    const timeoutId = setTimeout(() => {
+      state.keywords.status = FetchStatus.COMPLETE
+      commit('getKeywords')
+      resolve()
+    }, 3000)
+
+    axios.get('http://localhost:8000/api/keywords/all')
+    .then(function (response) {
+      clearTimeout(timeoutId)
+      response.data.forEach(keyword => {
+        const entry = state.keywords.results.find(entry => {
+          return entry.id === keyword.id
+        })
+        if (!entry) {
+          state.keywords.results.push(keyword)
+        }
       })
-      if (!entry) {
-        state.keywords.results.push(keyword)
-      }
+      state.keywords.status = FetchStatus.COMPLETE
+      commit('getKeywords')
+      resolve()
     })
-    state.keywords.status = FetchStatus.COMPLETE
-    commit('getKeywords')
-  })
-  .catch(function (error) {
-    console.log(error)
+    .catch(function (error) {
+      console.log(error)
+    })
   })
 }
 
-export const getSearchResult = ({ commit, state }, query) => {
-  console.log('PAYLOAD!!', query)
+export const saveSearchResults = ({ commit, state }, query) => {
+  if (state.keywords.status === FetchStatus.INIT) {
+    console.log('haven`t fetched keywords yet!')
+  }
+  commit('saveSearchResults', query)
 }

@@ -9,35 +9,43 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'keywordPage',
-  computed: {
-    keywords () {
-      return this.$store.getters.keywords.results
-    },
-    results () {
-      const results = []
-      this.keywords.forEach( keyword => {
-
-        if (keyword.name == this.$route.params.id.toLowerCase()) {
-          axios.get(`http://localhost:8000/api/articles/${keyword.id}`)
-          .then(function (response) {
-            response.data.forEach(article => {
-              console.log(article)
-                results.push(article)
-              })
-            })
-
-          .catch(function (error) {
-            console.log(error)
-          })
-        }
-      })
-
-
-      return results
+  beforeRouteUpdate (to, from, next) {
+    this.match()
+    next()
+  },
+  data () {
+    return {
+      results: []
     }
+  },
+  computed: mapGetters([
+    'keywords',
+    'keywordStatus'
+  ]),
+  methods: {
+    ...mapActions([
+      'saveSearchResults',
+      'getKeywords'
+    ]),
+    match () {
+      this.getKeywords()
+        .then(() => {
+          this.keywords.forEach( keyword => {
+            if (keyword.name == this.$route.params.id.toLowerCase()) {
+              console.log('mathced!')
+              this.$store.dispatch('saveSearchResults', keyword.id)
+            }
+          })
+        })
+    }
+  },
+  mounted: function () {
+    console.log('calling mounted')
+    this.match()
   }
 }
 </script>
