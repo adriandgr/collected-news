@@ -1,16 +1,16 @@
-const Keyword = require('../../../models').Keyword;
-const Article = require('../../../models').Article;
-const ArticleKeyword = require('../../../models').ArticleKeyword
+const {Keyword} = require('../../../models');
+const {Article} = require('../../../models');
+const {ArticleKeyword} = require('../../../models');
+
 
 module.exports = {
   keywords: entry => {
     const container = [];
-    console.log(entry);
     entry.keywords.forEach(keyword => {
       container.push(Promise.resolve(
         Keyword.findOrCreate({
           where: {
-            name: keyword.term
+            name: keyword.keyword
           }
         }
       )));
@@ -18,6 +18,7 @@ module.exports = {
     return container;
   },
   article: entry => {
+
     return Article.findOrCreate({
       where: {
         title: entry.title,
@@ -37,10 +38,14 @@ module.exports = {
     const container = [];
     keywords.forEach(keyword => {
       container.push(Promise.resolve(
-        ArticleKeyword.create({
-          keywordId: keyword.id,
-          articleId: articleId,
-          frequency: keyword.tf
+        ArticleKeyword.findOrCreate({
+          where: {
+            keywordId: keyword.id,
+            articleId: articleId,
+          },
+          defaults: {
+            frequency: keyword.tf
+          }
         }
       )));
     });

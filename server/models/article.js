@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    normalizedSentiment: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    }
   }, {
     classMethods: {
       associate: (models) => {

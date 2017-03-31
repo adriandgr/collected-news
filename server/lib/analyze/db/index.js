@@ -1,11 +1,13 @@
 const insert = require('./insert');
+const normalizeSentiment = require('./sentiment/normalize');
 
 module.exports = entries => {
+
   entries.forEach(entry => {
-    let n = 0;
     let keywords = entry.keywords.map(keyword => {
       return keyword;
     });
+    let sentiment = entry.sentiment;
     Promise.all(insert.keywords(entry))
       .then(rows => {
         const keywordIds = rows.map(arr => {
@@ -19,15 +21,22 @@ module.exports = entries => {
           .then(arr => {
             [row, changed] = arr;
             const articleId = row.id;
-            changed ? console.log('Inserted new article') : console.log('Duplicate article found');
+            changed && console.log('Inserted new article');
             return Promise.resolve(articleId);
-          });
+          })
+          .then(articleId => {
+            normalizeSentiment(articleId, sentiment);
+            return Promise.resolve(articleId);
+          })
       })
       .then(articleId => {
+
         return Promise.all(insert.articleKeywords(keywords, articleId));
       })
       .then(rows => {
-        const articleKeywordsIds = rows.map(row => { return row.id })
+        rows.forEach(row => {
+          row[1] && console.log('Added new Article/Keyword pairings');
+        });
       })
       .catch(err => {
         console.error(err);
