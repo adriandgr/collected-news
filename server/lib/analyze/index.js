@@ -17,6 +17,7 @@ getFeeds(feeds => {
       .then(entries => {
         mercury.resolve(entries)
           .then(data => {
+
             // Remove bad data
             let i = data.length;
             while(i--) {
@@ -36,14 +37,14 @@ getFeeds(feeds => {
             });
 
             console.log('Scraped and proccessed data from source:', entries[sample].source);
-
-            insert(entries);
-
-            })
-            .catch(err => {
-              console.log('RSS Feed failed');
-              console.error(err);
-            });
+            return Promise.resolve(entries);
+          })
+          .then(entries => {
+            Promise.resolve(insert(entries));
+          })
+          .catch(err => {
+            console.error(err);
+          });
       })
       .catch(err => {
         console.log('Final catch');

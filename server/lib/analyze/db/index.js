@@ -1,47 +1,54 @@
-const insert = require('./insert');
+const insertInto = require('./insert');
 const normalizeSentiment = require('./sentiment/normalize');
 
-module.exports = entries => {
+function normalizeSentiments() {
 
-  entries.forEach(entry => {
-    let keywords = entry.keywords.map(keyword => {
-      return keyword;
-    });
-    let sentiment = entry.sentiment;
-    Promise.all(insert.keywords(entry))
-      .then(rows => {
-        const keywordIds = rows.map(arr => {
-          let [row, ] = arr;
-          return row.id;
-        });
-        keywords.forEach((keyword, i) => {
-          keyword.id = keywordIds[i];
-        })
-        return insert.article(entry)
-          .then(arr => {
-            [row, changed] = arr;
-            const articleId = row.id;
-            changed && console.log('Inserted new article');
-            return Promise.resolve(articleId);
-          })
-          .then(articleId => {
-            normalizeSentiment(articleId, sentiment);
-            return Promise.resolve(articleId);
-          })
-      })
-      .then(articleId => {
+}
 
-        return Promise.all(insert.articleKeywords(keywords, articleId));
-      })
-      .then(rows => {
-        rows.forEach(row => {
-          row[1] && console.log('Added new Article/Keyword pairings');
-        });
-      })
-      .catch(err => {
-        console.error(err);
-      });
+function insert(entry) {
+  const keywords = entry.keywords.map(keyword => {
+    return keyword;
   });
+  const sentiment = entry.sentiment;
+  Promise.all(insertInto.keywords(entry))
+    .then(rows => {
+      const keywordIds = rows.map(arr => {
+        [row, ] = arr;
+        return row.id;
+      });
+      keywords.forEach((keyword, i) => {
+        keyword.id = keywordIds[i];
+      })
+      return insertInto.article(entry)
+        .then(arr => {
+          [row, changed] = arr;
+          const articleId = row.id;
+          changed && console.log('Inserted new article');
+          return Promise.resolve(articleId);
+        })
+        .then(articleId => {
+          return Promise.resolve(articleId);
+        })
+    })
+    .then(articleId => {
+      return Promise.all(insertInto.articleKeywords(keywords, articleId));
+    })
+    .then(rows => {
+      rows.forEach(row => {
+        [, success] = row;
+        success && console.log('Added new Article/Keyword pairings');
+      });
+    });
+}
+
+function insertIntoDatabase(entries) {
+  entries.forEach(entry => {
+    insert(entry);
+  });
+}
+
+module.exports = entries => {
+  return Promise.resolve(insertIntoDatabase(entries));
 };
 
 
