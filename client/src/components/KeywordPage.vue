@@ -28,7 +28,7 @@ export default {
   ]),
   methods: {
     ...mapActions([
-      'saveSearchResults',
+      'getSearchResults',
       'getKeywords'
     ]),
     match () {
@@ -37,7 +37,7 @@ export default {
           this.keywords.forEach( keyword => {
             if (keyword.name == this.$route.params.id.toLowerCase()) {
               console.log('mathced!')
-              this.$store.dispatch('saveSearchResults', keyword.id)
+              this.$store.dispatch('getSearchResults', keyword.name)
             }
           })
         })

@@ -82,13 +82,32 @@ export const getKeywords = ({ commit, state }) => {
     })
     .catch(function (error) {
       console.log(error)
+      reject()
     })
   })
 }
 
-export const saveSearchResults = ({ commit, state }, query) => {
-  if (state.keywords.status === FetchStatus.INIT) {
-    console.log('haven`t fetched keywords yet!')
-  }
-  commit('saveSearchResults', query)
+export const getSearchResults = ({ commit, state }, query) => {
+  return new Promise ((resolve, reject) => {
+    state.search.status = FetchStatus.LOADING
+    console.log(query)
+    axios.get(`http://localhost:8000/api/keywords/${query}`)
+    .then(function (response) {
+
+      response.data.forEach(article => {
+        console.log(article)
+      })
+      state.keywords.status = FetchStatus.COMPLETE
+      commit('getSearchResults', query)
+      resolve()
+    })
+    .catch(function (error) {
+      console.log(error)
+      reject()
+    })
+
+
+
+  })
+
 }

@@ -19,13 +19,11 @@ export default {
   },
   methods: mapActions([
     'getArticles',
-    'getSources',
-    'getKeywords'
+    'getSources'
   ]),
   created () {
     this.getArticles(),
-    this.getSources(),
-    this.getKeywords()
+    this.getSources()
   }
 }
 </script>

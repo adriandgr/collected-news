@@ -19,6 +19,10 @@ const state = {
   keywords: {
     status: FetchStatus.INIT,
     results: []
+  },
+  search: {
+    status: FetchStatus.INIT,
+    results: []
   }
 }
 

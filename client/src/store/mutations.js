@@ -7,7 +7,7 @@ export const getSources = state => {
 export const getKeywords = state => {
   state.keywords
 }
-export const saveSearchResults = (state, results) => {
+export const getSearchResults = (state, results) => {
   console.log('dispatched a mutation:', results)
   state.searchResults
 }
