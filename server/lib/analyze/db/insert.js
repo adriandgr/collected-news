@@ -10,7 +10,7 @@ module.exports = {
       container.push(Promise.resolve(
         Keyword.findOrCreate({
           where: {
-            name: keyword.keyword
+            name: keyword.term
           }
         }
       )));
@@ -18,7 +18,6 @@ module.exports = {
     return container;
   },
   article: entry => {
-
     return Article.findOrCreate({
       where: {
         title: entry.title,
