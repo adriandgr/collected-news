@@ -96,6 +96,8 @@ getSources(url)
             articlesFromOneSource[i].keywords = analyze.keywords(body);
           });
 
+          console.log(articlesFromOneSource);
+
           return Promise.resolve(articlesFromOneSource)
         })
         .then(data => {
