@@ -28,21 +28,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-let data = {
-  hey: '../assets/chris.jpg'
-}
 export default {
   name: 'keyword',
   props: ['article'],
-  data: function () {
-    return data
-  },
-  computed: {
-    ...mapGetters([
-      'articles'
-    ])
-  }
 }
 </script>
 

@@ -1,30 +1,38 @@
 <template>
-  <div class="ui raised container segment">
-    {{$route.params}} {{results}}
-    <div v-for="result in results">
-      {{result}}
+  <div>
+
+    <div v-if="search.results.length" class ="ui container" >
+      <h1>Search results for <em>{{$route.params.key}}</em></h1>
+      <SearchHit v-for="result in search.results" :result="result"></SearchHit>
     </div>
+
+    <div v-else class ="ui raised container segment no-results">
+      <h2 class="ui center aligned icon orange header">
+        <i class="circular find orange icon"></i>
+        No Search Results
+      </h2>
+      <h3 class="ui center aligned grey header">No keywords matched the query: <em>{{$route.params.key}}</em></h3>
+    </div>
+
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import SearchHit from '@/components/partials/SearchHit'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'keywordPage',
+  components: {
+    SearchHit
+  },
   beforeRouteUpdate (to, from, next) {
     this.match()
     next()
   },
-  data () {
-    return {
-      results: []
-    }
-  },
   computed: mapGetters([
     'keywords',
-    'keywordStatus'
+    'search'
   ]),
   methods: {
     ...mapActions([
@@ -34,16 +42,20 @@ export default {
     match () {
       this.getKeywords()
         .then(() => {
-          this.keywords.forEach( keyword => {
-            if (keyword.name == this.$route.params.id.toLowerCase()) {
-              console.log('mathced!')
+          let matched = false
+          this.keywords.results.forEach( keyword => {
+            if (keyword.name == this.$route.params.key.toLowerCase()) {
+              matched = true
               this.$store.dispatch('getSearchResults', keyword.name)
             }
           })
+          if (!matched) {
+            this.$store.dispatch('getSearchResults')
+          }
         })
     }
   },
-  mounted: function () {
+  mounted () {
     console.log('calling mounted')
     this.match()
   }
@@ -53,20 +65,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-.no-sources {
-  color: #757575;
-  font-size: 2em;
-  margin-top: 6em;
-  margin-bottom: 12em;
+.no-results {
+  margin: 5em 0;
 }
 
-.no-sources p {
-  margin-top: 1em;
-
-}
-
-.ui.link.cards {
-  margin-top: 4em;
-  margin-bottom: 12em;
-}
 </style>

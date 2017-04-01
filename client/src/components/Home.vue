@@ -8,7 +8,7 @@
   <div v-else>
     <transition name="fade">
     <div v-if="hasArticles" class="ui three stackable link cards">
-      <Keyword v-for="article in articles" :article="article"></Keyword>
+      <Keyword v-for="article in topArticles.results" :article="article"></Keyword>
     </div>
 
     <div v-else>
@@ -21,7 +21,7 @@
 
 <script>
 import Keyword from '@/components/partials/Keyword'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import FetchStatus from '@/store/constants/fetch-status'
 
 export default {
@@ -35,18 +35,18 @@ export default {
     }
   },
   computed: {
-    articles () {
-      return this.$store.getters.articles.results
-    },
+    ...mapGetters([
+      'topArticles'
+    ]),
     hasArticles () {
-      let len = this.$store.getters.articles.results.length
+      let len = this.topArticles.results.length
       return len > 0
     },
     isLoading () {
-      return this.$store.getters.articles.status === FetchStatus.LOADING
+      return this.topArticles.status === FetchStatus.LOADING
     },
     ...mapActions([
-      'getArticles'
+      'getTopKeywordArticles'
     ])
   }
 }

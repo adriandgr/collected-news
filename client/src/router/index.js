@@ -22,7 +22,7 @@ export default new Router({
       name: 'Article',
       component: Article
     }, {
-      path: '/keyword/:id',
+      path: '/keyword/:key',
       name: 'keyword',
       component: KeywordPage
     }

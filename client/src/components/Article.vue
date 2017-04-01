@@ -1,35 +1,13 @@
 <template>
   <div class="ui text container">
-<!--   <p><em>keword:</em> {{ thisArticle.keyword }}</p> -->
-  <div v-if="thisArticle" class="ui raised segment article-content">
 
-  <table>
-    <tr>
-      <td>
-        <div :class="articleSentiment < 0 ? 'ui red tiny progress flipped' : 'ui disabled tiny progress flipped'" :data-percent="articleSentiment < 0 ? Math.abs(articleSentiment)-1 : 99" id="example1">
-          <div class="bar" v-progress></div>
-        </div>
-      </td>
+  <div v-if="article" class="ui raised segment article-content">
 
-      <td>
-        <div :class="articleSentiment >= 0 ? 'ui green tiny progress' : 'ui disabled tiny progress'" :data-percent="articleSentiment >= 0 ? articleSentiment : 99" id="example2">
-          <div class="bar"v-progress></div>
-        </div>
-      </td>
-    </tr>
-  </table>
-<div class="sentiment-score">sentiment score: {{articleSentiment}}</div>
-
-    <h1>{{ thisArticle.title }}</h1>
-
-<img :src="thisArticle.leadImageUrl" class="leadArticleImg">
-
-<br><br>
-    <p>
-
-      {{ firstParagraph }}
-    </p>
-
+    <SentimentBar :sentiment="sentiment"></SentimentBar>
+    <h1>{{ article.title }}</h1>
+    <img :src="article.leadImageUrl" class="leadArticleImg">
+    <br><br>
+    <p>{{ firstParagraph }}</p>
 
     <p v-for="p in restOfContent" > {{p}}</p>
 </div>
@@ -39,80 +17,71 @@
 </template>
 
 <script>
+import SentimentBar from '@/components/partials/SentimentBar'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'article',
-  data () {
-    return {
-      msg: 'Article View',
-      articleId: this.$route.params.id
-    }
+  components: {
+    SentimentBar
   },
   computed: {
-    articles () {
-      return this.$store.getters.articles.results
-    },
-    articleSentiment () {
-      let article = this.thisArticle
-      console.log('art!',article)
+    ...mapGetters([
+      'getArticleById',
+      'articleSentiment'
+    ]),
+    article() {
+      let article = this.getArticleById(this.$route.params.id)
       if (!article) {
-        return
+        this.findArticle()
+          .then((item) => {
+            return item
+          })
+          .catch(err => console.log(err))
       }
-      return (Math.ceil(article.sentiment*1000) > 100 || Math.ceil(article.sentiment*1000) < -100 ? 100 * (Math.ceil(article.sentiment/Math.abs(article.sentiment))) : Math.ceil(article.sentiment*1000))
+      return article
+    },
+    sentiment () {
+      return this.articleSentiment(this.$route.params.id)
     },
     articleContent () {
-      return JSON.parse(this.thisArticle.content)
+      return JSON.parse(this.article.content)
     },
     firstParagraph () {
       return this.articleContent[0]
     },
     restOfContent() {
       return this.articleContent.splice(1)
-    },
-    thisArticle () {
-      const article = this.$store.getters.articles.results.find(a => {
-        return a.id === Number(this.$route.params.id)
-      })
-      if (!article) {
-        return
-      }
-      return {
-        title: article.title,
-        author: article.author,
-        pubDate: article.pubDate,
-        content: article.content,
-        leadImageUrl: article.leadImageUrl,
-        link: article.link,
-        sentiment: article.sentiment,
-        snippet: article.snippet,
-        keyword: article.name
-      }
     }
+  },
+  methods: {
+    ...mapActions([
+      'addArticleById'
+    ]),
+    findArticle () {
+      return new Promise((resolve, reject) => {
+        let article = this.getArticleById(this.$route.params.id)
+        if (!article) {
+          console.log('no article found', article)
+        this.addArticleById(this.$route.params.id)
+          .then((res) => {
+            resolve(this.getArticleById(this.$route.params.id))
+          })
+        }
+      })
+
+    }
+  },
+  created () {
+    this.findArticle().then((res) => {
+      console.log('promised', res)
+    })
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-.sentiment-score {
-  float: right;
-  transform: translate(-5px, -15px);
-}
-
-table {
-    width: 100%;
-}
-.flipped {
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
-}
-
-
 
 .article-content {
   padding: 50px !important;

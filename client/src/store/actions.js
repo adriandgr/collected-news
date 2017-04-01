@@ -1,31 +1,57 @@
 import axios from 'axios'
 import FetchStatus from './constants/fetch-status'
 
-export const getArticles = ({ commit, state }) => {
-  state.articles.status = FetchStatus.LOADING
+export const setTopKeywordArticles = ({ commit, state }) => {
+  state.topArticles.status = FetchStatus.LOADING
   const timeoutId = setTimeout(() => {
-    state.articles.status = FetchStatus.COMPLETE
-    commit('getArticles')
+    state.topArticles.status = FetchStatus.COMPLETE
+    commit('setTopArticles')
   }, 3000)
 
   axios.get('http://localhost:8000/api/keywords')
   .then(function (response) {
     clearTimeout(timeoutId)
+    let articles = []
     response.data.forEach(article => {
-      const entry = state.articles.results.find(entry => {
-        //console.log(article.id)
+      const entry = state.topArticles.results.find(entry => {
         return entry.id === article.id
       })
-      //console.log('entry', entry)
+
       if (!entry) {
-        state.articles.results.push(article)
+        articles.push(article)
       }
     })
-    state.articles.status = FetchStatus.COMPLETE
-    commit('getArticles')
+    state.topArticles.status = FetchStatus.COMPLETE
+    commit('setTopArticles', articles)
   })
   .catch(function (error) {
     console.log(error)
+  })
+}
+
+export const addArticleById = ( { commit, state }, id ) => {
+  return new Promise((resolve, reject) => {
+    state.articles.status = FetchStatus.LOADING
+    const article = state.articles.results.find(a => {
+      return a.id === Number(id)
+    })
+
+    if (!article) {
+      axios.get(`http://localhost:8000/api/articles/${id}`)
+      .then(function (res) {
+        state.articles.status = FetchStatus.COMPLETE
+        commit('addArticle', res.data)
+        resolve()
+      })
+      .catch(function (error) {
+        console.log(error)
+        reject()
+      })
+    } else {
+      resolve()
+    }
+
+
   })
 }
 
@@ -91,14 +117,15 @@ export const getSearchResults = ({ commit, state }, query) => {
   return new Promise ((resolve, reject) => {
     state.search.status = FetchStatus.LOADING
     console.log(query)
+    let results = []
     axios.get(`http://localhost:8000/api/keywords/${query}`)
     .then(function (response) {
 
       response.data.forEach(article => {
-        console.log(article)
+        results.push(article)
       })
       state.keywords.status = FetchStatus.COMPLETE
-      commit('getSearchResults', query)
+      commit('getSearchResults', results)
       resolve()
     })
     .catch(function (error) {

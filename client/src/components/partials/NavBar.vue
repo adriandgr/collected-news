@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     hit () {
-      this.$router.push({ name: 'keyword', params: { id: this.searchTerm }})
+      this.$router.push({ name: 'keyword', params: { key: this.searchTerm }})
       this.searchTerm = ''
       //console.log('search by', $('#search-by').dropdown('get value'))
 

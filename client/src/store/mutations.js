@@ -1,6 +1,13 @@
-export const getArticles = state => {
-  state.articles
+export const setTopArticles = (state, articles) => {
+  articles.forEach(article =>{
+    state.topArticles.results.push(article)
+  })
 }
+
+export const addArticle = (state, article) => {
+  state.articles.results.push(article)
+}
+
 export const getSources = state => {
   state.sources
 }
@@ -8,8 +15,7 @@ export const getKeywords = state => {
   state.keywords
 }
 export const getSearchResults = (state, results) => {
-  console.log('dispatched a mutation:', results)
-  state.searchResults
+  state.search.results = results
 }
 
 // getresults () {
