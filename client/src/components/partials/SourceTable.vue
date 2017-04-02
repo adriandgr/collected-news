@@ -14,7 +14,7 @@
     <tr>
       <td class="collapsing">
         <div class="ui fitted slider checkbox">
-          <input type="checkbox" class='checked' > <label></label>
+          <input type="checkbox" checked="checked"> <label></label>
         </div>
       </td>
       <td ><img
@@ -28,7 +28,7 @@
       <td>{{source.category}}</td>
       <td class="single line">{{ lastUpdate(source.latestArticle) }}</td>
       <td>
-        <h2 class="ui center aligned header">A-</h2>
+        <h2 class="ui center aligned header">{{letterGrade(source.avg_sentiment)}}</h2>
       </td>
     </tr>
   </tbody>
@@ -63,7 +63,8 @@ export default {
   name: 'sourceTable',
   props: ['sources'],
   computed: mapGetters([
-    'getSourcePagintation'
+    'getSourcePagintation',
+    'letterGrader'
   ]),
   methods: {
     ...mapActions([
@@ -80,6 +81,9 @@ export default {
       }
 
       return moment(source).fromNow()
+    },
+    letterGrade(sentiment) {
+      return this.letterGrader(sentiment)
     },
     setPage (event) {
       this.updateSourcePage(Number(event.target.innerText) - 1)
