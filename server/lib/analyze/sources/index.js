@@ -18,7 +18,7 @@ module.exports = {
             name: source.name,
             link: source.url,
             description: source.description,
-            logoLink: source.urlsToLogos.medium
+            logoLink: source.urlsToLogos.small
           }
         })
       ));
