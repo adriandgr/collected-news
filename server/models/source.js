@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     link: DataTypes.STRING,
+    logoLink: DataTypes.TEXT,
   }, {
     classMethods: {
       associate: (models) => {

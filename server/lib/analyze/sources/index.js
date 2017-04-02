@@ -6,12 +6,19 @@ module.exports = {
   insertSources: sources => {
     const inserts = [];
     sources.forEach(source => {
+      let tester = true
+      if (tester) {
+        console.log()
+        tester = false
+      }
+
       inserts.push(Promise.resolve(
         Source.findOrCreate({
           where: {
             name: source.name,
             link: source.url,
-            description: source.description
+            description: source.description,
+            logoLink: source.urlsToLogos.medium
           }
         })
       ));
