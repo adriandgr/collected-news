@@ -19,6 +19,7 @@ const state = {
   },
   sources: {
     status: FetchStatus.INIT,
+    pagination: 0,
     results: []
   },
   keywords: {
