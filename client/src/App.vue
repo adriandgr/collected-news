@@ -24,8 +24,8 @@ export default {
     'addArticleById'
   ]),
   created () {
-    this.setTopKeywordArticles(),
-    this.getSources()
+    this.getSources(),
+    this.setTopKeywordArticles()
   }
 }
 </script>

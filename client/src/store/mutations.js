@@ -4,6 +4,11 @@ export const setTopArticles = (state, articles) => {
   })
 }
 
+export const incrementKeywordPage = state => {
+  state.topArticles.pagination++
+  console.log('incremented pagination:', state.topArticles.pagination)
+}
+
 export const addArticle = (state, article) => {
   state.articles.results.push(article)
 }

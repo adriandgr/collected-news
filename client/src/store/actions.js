@@ -8,7 +8,7 @@ export const setTopKeywordArticles = ({ commit, state }) => {
     commit('setTopArticles')
   }, 3000)
 
-  axios.get('http://localhost:8000/api/keywords')
+  axios.get(`http://localhost:8000/api/keywords?p=${state.topArticles.pagination}`)
   .then(function (response) {
     clearTimeout(timeoutId)
     let articles = []
@@ -27,6 +27,10 @@ export const setTopKeywordArticles = ({ commit, state }) => {
   .catch(function (error) {
     console.log(error)
   })
+}
+
+export const incrementKeywordPage = ({ commit, state }) => {
+  commit('incrementKeywordPage')
 }
 
 export const addArticleById = ( { commit, state }, id ) => {
