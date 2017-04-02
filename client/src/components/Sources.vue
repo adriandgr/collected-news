@@ -5,12 +5,19 @@
       <div v-if="isLoading" class="no-sources">
         <div class="ui active centered inline massive loader"></div>
         <p>{{ fetchMsg }}</p>
-        </div>
+      </div>
       <div v-else>
-
-
       <div v-if="hasSources" class="three wide column">
-        <Source v-for="source in sources" :source="source"></Source>
+        <div class="ui menu">
+          <div class="ui category search item">
+            <div class="ui transparent icon input">
+              <input class="prompt" type="text" placeholder="Search sources...">
+              <i class="search link icon"></i>
+            </div>
+            <div class="results"></div>
+          </div>
+        </div>
+        <SourceTable :sources="sourceRange"></SourceTable>
       </div>
       <div v-else>
         no sources
@@ -21,13 +28,13 @@
 </template>
 
 <script>
-import Source from '@/components/partials/Source'
-import { mapActions } from 'vuex'
+import SourceTable from '@/components/partials/SourceTable'
+import { mapGetters, mapActions } from 'vuex'
 import FetchStatus from '@/store/constants/fetch-status'
 
 export default {
   name: 'sources',
-  components: { Source },
+  components: { SourceTable },
   data () {
     return {
       fetchMsg: 'waiting for sources ...',
@@ -36,15 +43,20 @@ export default {
     }
   },
   computed: {
-    sources () {
-      return this.$store.getters.sources.results
+    ...mapGetters([
+      'paginateSources',
+      'sources',
+      'getSourcePagintation'
+    ]),
+    sourceRange () {
+      return this.paginateSources(this.getSourcePagintation)
     },
     hasSources () {
-      let len = this.$store.getters.sources.results.length
+      let len = this.sourceRange.length
       return len > 0
     },
     isLoading () {
-      return this.$store.getters.sources.status === FetchStatus.LOADING
+      return this.sources.status === FetchStatus.LOADING
     },
     ...mapActions([
       'getSources'

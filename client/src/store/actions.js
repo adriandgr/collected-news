@@ -1,6 +1,9 @@
 import axios from 'axios'
 import FetchStatus from './constants/fetch-status'
 
+const HOST_A = 'http://10.10.41.105:8000'
+const HOST_B = 'http://localhost:8000'
+
 export const setTopKeywordArticles = ({ commit, state }) => {
   state.topArticles.status = FetchStatus.LOADING
   const timeoutId = setTimeout(() => {
@@ -8,7 +11,7 @@ export const setTopKeywordArticles = ({ commit, state }) => {
     commit('setTopArticles')
   }, 3000)
 
-  axios.get(`http://localhost:8000/api/keywords?p=${state.topArticles.pagination}`)
+  axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
   .then(function (response) {
     clearTimeout(timeoutId)
     let articles = []
@@ -41,7 +44,7 @@ export const addArticleById = ( { commit, state }, id ) => {
     })
 
     if (!article) {
-      axios.get(`http://localhost:8000/api/articles/${id}`)
+      axios.get(`${HOST_B}/api/articles/${id}`)
       .then(function (res) {
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticle', res.data)
@@ -59,26 +62,31 @@ export const addArticleById = ( { commit, state }, id ) => {
   })
 }
 
-export const getSources = ({ commit, state }) => {
+export const updateSourcePage = ({ commit, state }, pageNum) => {
+  commit('updateSourcePage', pageNum)
+}
+
+export const setSources = ({ commit, state }) => {
   state.sources.status = FetchStatus.LOADING
   const timeoutId = setTimeout(() => {
     state.sources.status = FetchStatus.COMPLETE
-    commit('getSources')
+    commit('setSources')
   }, 3000)
 
-  axios.get('http://localhost:8000/api/sources')
+  axios.get(`${HOST_B}/api/sources`)
   .then(function (response) {
     clearTimeout(timeoutId)
+    let sources = []
     response.data.forEach(source => {
       const entry = state.sources.results.find(entry => {
         return entry.id === source.id
       })
       if (!entry) {
-        state.sources.results.push(source)
+        sources.push(source)
       }
     })
     state.sources.status = FetchStatus.COMPLETE
-    commit('getSources')
+    commit('setSources', sources)
   })
   .catch(function (error) {
     console.log(error)
@@ -95,7 +103,7 @@ export const getKeywords = ({ commit, state }) => {
       resolve()
     }, 3000)
 
-    axios.get('http://localhost:8000/api/keywords/all')
+    axios.get(`${HOST_B}/api/keywords/all`)
     .then(function (response) {
       clearTimeout(timeoutId)
       response.data.forEach(keyword => {
@@ -122,7 +130,7 @@ export const getSearchResults = ({ commit, state }, query) => {
     state.search.status = FetchStatus.LOADING
     console.log(query)
     let results = []
-    axios.get(`http://localhost:8000/api/keywords/${query}`)
+    axios.get(`${HOST_B}/api/keywords/${query}`)
     .then(function (response) {
 
       response.data.forEach(article => {

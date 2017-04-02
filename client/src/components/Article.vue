@@ -5,8 +5,11 @@
 
     <SentimentBar :sentiment="sentiment"></SentimentBar>
     <h1>{{ article.title }}</h1>
+
+    <p> <em>{{article.author || source }}</em> | {{pubDate}}</p>
     <img :src="article.leadImageUrl" class="leadArticleImg">
     <br><br>
+
     <p>{{ firstParagraph }}</p>
 
     <p v-for="p in restOfContent" > {{p}}</p>
@@ -19,6 +22,7 @@
 <script>
 import SentimentBar from '@/components/partials/SentimentBar'
 import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'article',
@@ -28,8 +32,15 @@ export default {
   computed: {
     ...mapGetters([
       'getArticleById',
+      'getSourceById',
       'articleSentiment'
     ]),
+    pubDate() {
+      return moment(this.article.pubDate).format('lll')
+    },
+    source() {
+      return this.getSourceById(Number(this.article.sourceId))
+    },
     article() {
       let article = this.getArticleById(this.$route.params.id)
       if (!article) {
