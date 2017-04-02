@@ -5,8 +5,8 @@ export const getArticleById = (state, getters) => (id) =>
   getters.articles.results.find(article => article.id === Number(id))
 
 export const getSourceById = (state, getters) => (id) => {
-  let source = getters.sources.results.find(source => source.Source.id === Number(id))
-  return source.Source.name
+  let source = getters.sources.results.find(source => source.id === Number(id))
+  return source.name
 }
 
 export const paginateSources = (state, getters) => (p) => {
