@@ -5,8 +5,12 @@ const sequelize = require('../models').sequelize;
 
 module.exports = {
   index(req, res) {
+    let page = req.query.p * 6 || 0
     keywords.list(data => {
-      res.json(data);
+      res.json(data.filter(each => {
+        let pos = data.indexOf(each)
+        return (pos >= page && pos < page + 6)
+      }));
     });
   },
   all(req, res) {

@@ -15,6 +15,11 @@ Vue.directive('progress', {
   }
 })
 
+router.beforeEach(function (to, from, next) {
+  window.scrollTo(0, 0)
+  next();
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

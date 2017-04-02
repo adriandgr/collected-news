@@ -3,7 +3,11 @@ const {sequelize, Keyword, Article, ArticleKeyword} = require('../../models');
 module.exports = {
   list: callback => { sequelize.query(
     `SELECT DISTINCT ON(rel, popular_keywords.name)
-        a.*,
+        a.id,
+        a.title,
+        a.link,
+        a."leadImageUrl",
+        a.sentiment,
         popular_keywords.name,
         popular_keywords.rel
     FROM "Articles" a
@@ -18,7 +22,7 @@ module.exports = {
                 "ArticleKeywords" ak ON ak."keywordId" = k.id
             GROUP BY k.id, k.name
             Order By rel DESC
-            LIMIT 6)
+            LIMIT 90)
         popular_keywords ON popular_keywords.id = akk."keywordId"
         ORDER BY rel DESC, popular_keywords.name`,
     {type: sequelize.QueryTypes.SELECT})

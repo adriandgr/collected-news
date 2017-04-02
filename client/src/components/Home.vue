@@ -1,54 +1,73 @@
 <template>
 <div class="ui center aligned container">
-
   <div v-if="isLoading" class="no-articles">
     <div class="ui active centered inline massive loader"></div>
     <p>{{ fetchMsg }}</p>
   </div>
   <div v-else>
-    <transition name="fade">
+
     <div v-if="hasArticles" class="ui three stackable link cards">
-      <Keyword v-for="article in articles" :article="article"></Keyword>
+
+        <Keyword v-for="article in topArticles.results" :article="article"></Keyword>
+        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10"> hello</div>
     </div>
 
     <div v-else>
       no articles
     </div>
-    </transition>
-  </div>
 
+  </div>
 </div>
 </template>
 
 <script>
 import Keyword from '@/components/partials/Keyword'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import FetchStatus from '@/store/constants/fetch-status'
+import infiniteScroll from 'vue-infinite-scroll'
+
+var count = 0
 
 export default {
   name: 'home',
   components: { Keyword },
+  directives: {infiniteScroll},
   data () {
     return {
       fetchMsg: 'waiting for articles ...',
-      try: 3,
-      show: true
+      data: [],
+      busy: false
+    }
+  },
+  methods: {
+    ...mapActions([
+      'setTopKeywordArticles',
+      'incrementKeywordPage'
+    ]),
+    loadMore: function() {
+      this.busy = true;
+      console.log('heyo!!')
+      setTimeout(() => {
+        this.setTopKeywordArticles(),
+        console.log('get', this.topArticles.pagination)
+        this.busy = false;
+      }, 500);
     }
   },
   computed: {
-    articles () {
-      return this.$store.getters.articles.results
+    ...mapGetters([
+      'topArticles'
+    ]),
+    distance () {
+      return this.nearBottom()
     },
     hasArticles () {
-      let len = this.$store.getters.articles.results.length
+      let len = this.topArticles.results.length
       return len > 0
     },
     isLoading () {
-      return this.$store.getters.articles.status === FetchStatus.LOADING
-    },
-    ...mapActions([
-      'getArticles'
-    ])
+      return this.topArticles.status === FetchStatus.LOADING
+    }
   }
 }
 </script>

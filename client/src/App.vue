@@ -9,7 +9,7 @@
 <script>
 import NavBar from '@/components/partials/NavBar'
 import Foot from '@/components/partials/Foot'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'app',
@@ -17,13 +17,15 @@ export default {
     NavBar,
     Foot
   },
+  computed: mapGetters(['getArticleById']),
   methods: mapActions([
-    'getArticles',
-    'getSources'
+    'setTopKeywordArticles',
+    'getSources',
+    'addArticleById'
   ]),
   created () {
-    this.getArticles(),
-    this.getSources()
+    this.getSources(),
+    this.setTopKeywordArticles()
   }
 }
 </script>

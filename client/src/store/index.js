@@ -8,11 +8,24 @@ import FetchStatus from './constants/fetch-status'
 Vue.use(Vuex)
 
 const state = {
+  topArticles: {
+    status: FetchStatus.INIT,
+    pagination: 0,
+    results: []
+  },
   articles: {
     status: FetchStatus.INIT,
     results: []
   },
   sources: {
+    status: FetchStatus.INIT,
+    results: []
+  },
+  keywords: {
+    status: FetchStatus.INIT,
+    results: []
+  },
+  search: {
     status: FetchStatus.INIT,
     results: []
   }

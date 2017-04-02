@@ -6,7 +6,16 @@ module.exports = {
   },
   all(req, res) {
     return Article
-      .all()
+      .all({
+      attributes: [
+      'id',
+      'author',
+      'title',
+      'snippet',
+      'link',
+      'leadImageUrl'
+      ]
+    })
       .then((article) => res.status(200).send(article))
       .catch((err) => res.status(404).send({msg: 'article not found'}));
   },
