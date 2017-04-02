@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Sources from '@/components/Sources'
+import Analytics from '@/components/Analytics'
 import Article from '@/components/Article'
 import KeywordPage from '@/components/KeywordPage'
 
@@ -25,6 +26,10 @@ export default new Router({
       path: '/keyword/:key',
       name: 'keyword',
       component: KeywordPage
+    }, {
+      path: '/analytics',
+      name: 'analytics',
+      component: Analytics
     }
   ]
 })

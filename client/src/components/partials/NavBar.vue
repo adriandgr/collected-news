@@ -12,6 +12,7 @@
       </router-link>
       <router-link to="/sources" class="item">Sources</router-link>
       <a href="#" class="item">Articles</a>
+      <router-link to="/analytics" class="item">Analytics</router-link>
 
       <div class="floated right item">
         <div class="ui right action left icon input">

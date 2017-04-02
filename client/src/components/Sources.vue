@@ -17,7 +17,6 @@
             <div class="results"></div>
           </div>
         </div>
-        <SourceChart :data="sourceRange"> </SourceChart>
         <SourceTable :sources="sourceRange"></SourceTable>
       </div>
       <div v-else>
@@ -30,13 +29,12 @@
 
 <script>
 import SourceTable from '@/components/partials/SourceTable'
-import SourceChart from '@/components/partials/SourceChart'
 import { mapGetters, mapActions } from 'vuex'
 import FetchStatus from '@/store/constants/fetch-status'
 
 export default {
   name: 'sources',
-  components: { SourceTable, SourceChart },
+  components: { SourceTable },
   data () {
     return {
       fetchMsg: 'waiting for sources ...',
@@ -50,6 +48,9 @@ export default {
       'sources',
       'getSourcePagintation'
     ]),
+    allSources () {
+      return this.sources.results
+    },
     sourceRange () {
       return this.paginateSources(this.getSourcePagintation)
     },
