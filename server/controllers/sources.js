@@ -4,18 +4,45 @@ const {sequelize} = require('../models');
 
 module.exports = {
   index(req, res) {
-    return Article.all({
-      include: [ Source ],
-      attributes: [[ sequelize.fn('avg', sequelize.col('sentiment')), 'avg_sentiment' ]],
-      order: 'avg_sentiment DESC',
-      group: [
-        'Article.sourceId',
-        'Article.id',
-        'Source.id'
-      ]
-     })
-    .then(articlesWithAverageSentiment => {
-      res.json(articlesWithAverageSentiment);
+    return sequelize.query(`
+      SELECT
+        "Sources".*,
+        COUNT("Articles"."id") AS "# of articles",
+        AVG("Articles"."sentiment") AS avg_sentiment
+      FROM
+        "Sources"
+      JOIN
+        "Articles"
+      ON
+        "Sources"."id" = "Articles"."sourceId"
+      GROUP BY
+        "Sources"."name",
+        "Sources"."id"
+      ORDER BY
+        avg_sentiment DESC
+    `)
+    //
+    .then(sourcesWithAnalytics => {
+      [sources, ] = sourcesWithAnalytics;
+      Article.all({
+        attributes: [
+          ['sourceId', 'id'],
+          [ sequelize.fn('max', sequelize.col('pubDate')), 'latest_article' ]
+        ],
+        where: ['"pubDate" is not null'],
+        group: [ 'sourceId' ]
+      })
+      .then(mostRecentArticlesForSources => {
+        sources.forEach(source => {
+          mostRecentArticlesForSources.forEach(instance => {
+            if(source.id === instance.dataValues.id) {
+              console.log(source.name);
+              source.latestArticle = instance.dataValues.latest_article;
+            }
+          });
+        });
+        res.json(sources);
+      });
     })
     .catch(err => {
       console.error(err);
