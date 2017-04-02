@@ -1,14 +1,25 @@
 const Source = require('../models').Source;
+const Article = require('../models').Article;
+const {sequelize} = require('../models');
 
 module.exports = {
   index(req, res) {
-    return Source.all()
-      .then(sources => {
-        res.json(sources);
-      })
-      .catch(err => {
-        res.status(400).send(err)
-      });
+    return Article.all({
+      include: [ Source ],
+      attributes: [[ sequelize.fn('avg', sequelize.col('sentiment')), 'avg_sentiment' ]],
+      order: 'avg_sentiment DESC',
+      group: [
+        'Article.sourceId',
+        'Article.id',
+        'Source.id'
+      ]
+     })
+    .then(articlesWithAverageSentiment => {
+      res.json(articlesWithAverageSentiment);
+    })
+    .catch(err => {
+      console.error(err);
+    });
   },
   individual(req, res) {
     const id = req.params.id;
