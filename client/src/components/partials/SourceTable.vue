@@ -5,6 +5,7 @@
       <th></th>
       <th>Name</th>
       <th>Description</th>
+      <th>Category</th>
       <th>Last Update</th>
       <th>Score</th>
     </tr>
@@ -13,16 +14,19 @@
     <tr>
       <td class="collapsing">
         <div class="ui fitted slider checkbox">
-          <input type="checkbox"> <label></label>
+          <input type="checkbox" class='checked' > <label></label>
         </div>
       </td>
       <td ><img
       class="source-logo"
-      :src="source.Source.logoLink"
-      :alt="`logo for ${source.Source.name}`"
-      :title="source.Source.name"></td>
-      <td>{{ source.Source.description }}</td>
-      <td class="single line">2 hours ago</td>
+      :src="source.logoLink"
+      :alt="`logo for ${ source.name }`"
+      :title="source.name"></td>
+      <td><strong>{{ source.name }}:</strong>
+      {{source.description}}
+      </td>
+      <td>{{source.category}}</td>
+      <td class="single line">{{ lastUpdate(source.latestArticle) }}</td>
       <td>
         <h2 class="ui center aligned header">A-</h2>
       </td>
@@ -30,7 +34,7 @@
   </tbody>
   <tfoot class="full-width">
     <tr>
-      <th colspan="5">
+      <th colspan="6">
         <div class="ui right floated pagination menu">
           <a class="icon item" @click="prevPage">
             <i class="left chevron icon"></i>
@@ -53,6 +57,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'sourceTable',
@@ -64,6 +69,18 @@ export default {
     ...mapActions([
       'updateSourcePage'
     ]),
+    lastUpdate(source) {
+      let pubDate = Number(moment(source).format('x'))
+      if(!source || pubDate < 0 ) {
+        return 'unknown'
+      }
+      if ( Date.now() - pubDate < 0) {
+        console.log('date is in future!')
+        return moment(pubDate - 3600000).fromNow()
+      }
+
+      return moment(source).fromNow()
+    },
     setPage (event) {
       this.updateSourcePage(Number(event.target.innerText) - 1)
       console.log(this.getSourcePagintation)
