@@ -6,21 +6,27 @@ export const setTopArticles = (state, articles) => {
 
 export const incrementKeywordPage = state => {
   state.topArticles.pagination++
-  console.log('incremented pagination:', state.topArticles.pagination)
+  //console.log('incremented pagination:', state.topArticles.pagination)
 }
 
 export const addArticle = (state, article) => {
   state.articles.results.push(article)
 }
 
-export const getSources = state => {
-  state.sources
+export const setSources = (state, sources) => {
+  sources.forEach(source =>{
+    state.sources.results.push(source)
+  })
 }
 export const getKeywords = state => {
   state.keywords
 }
 export const getSearchResults = (state, results) => {
   state.search.results = results
+}
+
+export const updateSourcePage = (state, pageNum) => {
+  state.sources.pagination = pageNum
 }
 
 // getresults () {
