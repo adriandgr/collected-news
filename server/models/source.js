@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     link: DataTypes.STRING,
+    logoLink: DataTypes.TEXT,
+    category: DataTypes.STRING,
+    language: DataTypes.STRING,
+    country: DataTypes.STRING,
   }, {
     classMethods: {
       associate: (models) => {

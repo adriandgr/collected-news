@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     author: {
@@ -23,10 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     link: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     leadImageUrl: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     sentiment: {
       type: DataTypes.FLOAT,

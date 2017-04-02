@@ -20,12 +20,12 @@ export default {
   computed: mapGetters(['getArticleById']),
   methods: mapActions([
     'setTopKeywordArticles',
-    'getSources',
+    'setSources',
     'addArticleById'
   ]),
   created () {
-    this.setTopKeywordArticles(),
-    this.getSources()
+    this.setSources(),
+    this.setTopKeywordArticles()
   }
 }
 </script>

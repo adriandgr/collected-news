@@ -9,19 +9,19 @@ SELECT
 	popular_keywords.rel
 FROM "Articles" a
 	JOIN "ArticleKeywords" akk ON a.id = akk."articleId"
-	JOIN 
-		(SELECT 
+	JOIN
+		(SELECT
 			COUNT(ak."keywordId") AS rel,
-			k.id, 
-			k.name 
+			k.id,
+			k.name
 		FROM "Keywords" k
-		JOIN 
-			"ArticleKeywords" ak ON 
-			ak."keywordId" = k.id 
-		GROUP BY k.id, k.name Order By rel DESC)
+		JOIN
+			"ArticleKeywords" ak ON
+			ak."keywordId" = k.id
+		GROUP BY k.id, k.name ORDER BY rel DESC)
 	popular_keywords ON popular_keywords.id = akk."keywordId"
 
 
---select count(k.id) from keyword k join article_keyword ak ON 
+--select count(k.id) from keyword k join article_keyword ak ON
 
 

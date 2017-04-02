@@ -35,10 +35,10 @@ module.exports = {
         },
       },
       link: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       leadImageUrl: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       sentiment: {
         type: Sequelize.FLOAT,

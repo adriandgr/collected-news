@@ -10,6 +10,7 @@ Vue.use(Vuex)
 const state = {
   topArticles: {
     status: FetchStatus.INIT,
+    pagination: 0,
     results: []
   },
   articles: {
@@ -18,6 +19,7 @@ const state = {
   },
   sources: {
     status: FetchStatus.INIT,
+    pagination: 0,
     results: []
   },
   keywords: {

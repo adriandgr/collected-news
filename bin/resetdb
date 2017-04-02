@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Rolling back"
-sequelize db:migrate:undo:all
-echo "Migrating"
+# sequelize db:migrate:undo:all
 sequelize db:migrate
-echo "Seeding"
 sequelize db:seed:all
