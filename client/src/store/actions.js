@@ -1,8 +1,8 @@
 import axios from 'axios'
 import FetchStatus from './constants/fetch-status'
 
-const HOST_A = 'http://localhost:8000'
-const HOST_B = 'http://10.10.41.105:8000'
+const HOST_A = 'http://10.10.41.105:8000'
+const HOST_B = 'http://localhost:8000'
 
 export const setTopKeywordArticles = ({ commit, state }) => {
   state.topArticles.status = FetchStatus.LOADING
