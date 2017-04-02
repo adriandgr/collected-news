@@ -7,7 +7,7 @@ module.exports = {
     return sequelize.query(`
       SELECT
         "Sources".*,
-        COUNT("Articles"."id") AS "# of articles",
+        COUNT("Articles"."id") AS "total_articles",
         AVG("Articles"."sentiment") AS avg_sentiment
       FROM
         "Sources"
@@ -36,7 +36,6 @@ module.exports = {
         sources.forEach(source => {
           mostRecentArticlesForSources.forEach(instance => {
             if(source.id === instance.dataValues.id) {
-              console.log(source.name);
               source.latestArticle = instance.dataValues.latest_article;
             }
           });
