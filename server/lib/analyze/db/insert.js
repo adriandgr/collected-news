@@ -21,13 +21,14 @@ module.exports = {
     return Article.findOrCreate({
       where: {
         title: entry.title,
-        link: entry.link,
+        link: entry.url,
         sourceId: entry.sourceId
       },
       defaults: {
         leadImageUrl: entry.leadImgUrl,
-        pubDate: entry.pubDate,
-        snippet: entry.snippet,
+        author: entry.author,
+        pubDate: entry.publishedAt,
+        snippet: entry.description,
         content: entry.content,
         sentiment: entry.sentiment,
       }

@@ -29,6 +29,9 @@ function insert(entry) {
         .then(articleId => {
           return Promise.resolve(articleId);
         })
+        .catch(err => {
+          console.error(err);
+        });
     })
     .then(articleId => {
       return Promise.all(insertInto.articleKeywords(keywords, articleId));
@@ -38,6 +41,10 @@ function insert(entry) {
         [, success] = row;
         success && console.log('Added new Article/Keyword pairings');
       });
+      return Promise.resolve(true);
+    })
+    .catch(err => {
+      console.error(err);
     });
 }
 
