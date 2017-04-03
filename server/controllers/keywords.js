@@ -32,7 +32,6 @@ module.exports = {
     })
   },
   trends(req, res) {
-    console.log('got here');
     ArticleKeyword.all({
       attributes: ['keywordId'],
       order: '"frequency" DESC',
