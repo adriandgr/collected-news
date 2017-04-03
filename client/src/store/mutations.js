@@ -14,15 +14,12 @@ export const addArticle = (state, article) => {
 }
 
 export const setSources = (state, sources) => {
-  sources.forEach(source =>{
-    state.sources.results.push(source)
-  })
+  state.sources.results = sources;
 }
 export const getKeywords = state => {
   state.keywords
 }
 export const setTrends = (state, trends) => {
-  console.log(trends);
   state.trends.results = trends;
 }
 export const getSearchResults = (state, results) => {

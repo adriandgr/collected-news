@@ -32,6 +32,7 @@ module.exports = {
     })
   },
   trends(req, res) {
+    console.log('got here');
     ArticleKeyword.all({
       attributes: ['keywordId'],
       order: '"frequency" DESC',
@@ -53,7 +54,7 @@ module.exports = {
         keywords.forEach(keyword => {
           trends.push(googleTrends.interestOverTime({
             keyword: keyword,
-            startTime: moment().subtract(5, 'days')._d
+            startTime: moment().subtract(1, 'year')._d
           }));
         });
         return Promise.all(trends)
@@ -65,13 +66,11 @@ module.exports = {
         let [keywords, trendData] = keywordsAndTrendData;
         keywords = keywords.map((keyword, i) => {
           return {
-            keywords: keyword,
+            keyword: keyword,
             dataPoints: JSON.parse(trendData[i])
                             .default
                             .timelineData
-                            .map(interval => {
-                              return interval.value[0]
-                            })
+                            .map(interval => { return interval.value[0] })
           }
         });
         res.json(keywords);

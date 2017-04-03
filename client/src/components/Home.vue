@@ -9,7 +9,7 @@
     <div v-if="hasArticles" class="ui three stackable link cards">
 
         <Keyword v-for="article in topArticles.results" :article="article"></Keyword>
-        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10"> hello</div>
+        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10"> {{this.data}}</div>
     </div>
 
     <div v-else>
@@ -46,12 +46,14 @@ export default {
     ]),
     loadMore: function() {
       this.busy = true;
-      console.log('heyo!!')
       setTimeout(() => {
-        this.setTopKeywordArticles(),
-        console.log('get', this.topArticles.pagination)
+        // this.setTopKeywordArticles(),
+        // console.log('get', this.topArticles.pagination)
+        for (var i = 0, j = 10; i < j; i++) {
+          this.data.push({ name: count++ });
+        }
         this.busy = false;
-      }, 500);
+      }, 1000);
     }
   },
   computed: {

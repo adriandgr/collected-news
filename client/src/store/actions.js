@@ -1,7 +1,5 @@
 import axios from 'axios'
 import FetchStatus from './constants/fetch-status'
-import googleTrends from 'google-trends-api'
-import moment from 'moment'
 
 const HOST_B = 'http://10.10.41.105:8000'
 const HOST_A = 'http://localhost:8000'
@@ -13,8 +11,8 @@ export const setTopKeywordArticles = ({ commit, state }) => {
     commit('setTopArticles')
   }, 3000)
 
-  axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
-  .then(function (response) {
+  axios.get(`${HOST_A}/api/keywords?p=${state.topArticles.pagination}`)
+   .then(function (response) {
     clearTimeout(timeoutId)
     let articles = []
     response.data.forEach(article => {
@@ -39,14 +37,13 @@ export const incrementKeywordPage = ({ commit, state }) => {
 }
 
 export const retrieveTrends = ({ commit, state}, keywords) => {
-  const trends = [];
-  keywords.forEach(keyword => {
-      console.log(googleTrends)
-    trends.push(
-      googleTrends.interestOverTime({ keyword: keyword, startTime: moment().subtract('years', 1)._d })
-    );
-  })
-  commit('setTrends', Promise.all(trends))
+  axios.get(`${HOST_A}/api/keywords/trends`)
+    .then(trends => {
+      commit('setTrends', trends);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 };
 
 export const addArticleById = ( { commit, state }, id ) => {
@@ -57,7 +54,7 @@ export const addArticleById = ( { commit, state }, id ) => {
     })
 
     if (!article) {
-      axios.get(`${HOST_B}/api/articles/${id}`)
+      axios.get(`${HOST_A}/api/articles/${id}`)
       .then(function (res) {
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticle', res.data)
@@ -79,32 +76,34 @@ export const updateSourcePage = ({ commit, state }, pageNum) => {
   commit('updateSourcePage', pageNum)
 }
 
-export const setSources = ({ commit, state }) => {
-  state.sources.status = FetchStatus.LOADING
-  const timeoutId = setTimeout(() => {
-    state.sources.status = FetchStatus.COMPLETE
-    commit('setSources')
-  }, 3000)
+export const setSources = ({ commit, state }) =>
+  new Promise((resolve, reject) => {
+    state.sources.status = FetchStatus.LOADING
+    const timeoutId = setTimeout(() => {
+      state.sources.status = FetchStatus.COMPLETE
+      commit('setSources')
+    }, 3000)
 
-  axios.get(`${HOST_B}/api/sources`)
-  .then(function (response) {
-    clearTimeout(timeoutId)
-    let sources = []
-    response.data.forEach(source => {
-      const entry = state.sources.results.find(entry => {
-        return entry.id === source.id
+    axios.get(`${HOST_A}/api/sources`)
+    .then(function (response) {
+      clearTimeout(timeoutId)
+      let sources = []
+      response.data.forEach(source => {
+        const entry = state.sources.results.find(entry => {
+          return entry.id === source.id
+        })
+        if (!entry) {
+          sources.push(source)
+        }
       })
-      if (!entry) {
-        sources.push(source)
-      }
+      state.sources.status = FetchStatus.COMPLETE
+      commit('setSources', sources)
     })
-    state.sources.status = FetchStatus.COMPLETE
-    commit('setSources', sources)
+    .catch(function (error) {
+      console.log(error)
+    })
   })
-  .catch(function (error) {
-    console.log(error)
-  })
-}
+
 
 export const getKeywords = ({ commit, state }) => {
   return new Promise((resolve, reject) => {
@@ -116,7 +115,7 @@ export const getKeywords = ({ commit, state }) => {
       resolve()
     }, 3000)
 
-    axios.get(`${HOST_B}/api/keywords/all`)
+    axios.get(`${HOST_A}/api/keywords/all`)
     .then(function (response) {
       clearTimeout(timeoutId)
       response.data.forEach(keyword => {
@@ -143,7 +142,7 @@ export const getSearchResults = ({ commit, state }, query) => {
     state.search.status = FetchStatus.LOADING
     console.log(query)
     let results = []
-    axios.get(`${HOST_B}/api/keywords/${query}`)
+    axios.get(`${HOST_A}/api/keywords/${query}`)
     .then(function (response) {
 
       response.data.forEach(article => {
