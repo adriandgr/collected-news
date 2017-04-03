@@ -12,7 +12,7 @@ export const setTopKeywordArticles = ({ commit, state, getters }) =>
       state.topArticles.status = FetchStatus.COMPLETE
       commit('setTopArticles')
       resolve()
-    }, 3000
+    }, 3000)
     axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
       .then(response => {
         clearTimeout(timeoutId)
