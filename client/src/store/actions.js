@@ -14,7 +14,7 @@ export const setTopKeywordArticles = ({ commit, state, getters }) =>
       resolve()
     }, 3000)
 
-    axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
+    axios.get(`${HOST_A}/api/keywords?p=${state.topArticles.pagination}`)
       .then(response => {
         clearTimeout(timeoutId)
         state.topArticles.status = FetchStatus.COMPLETE
@@ -37,7 +37,11 @@ export const incrementKeywordPage = ({ commit, state }) => {
 export const retrieveTrends = ({ commit, state}, keywords) => {
   axios.get(`${HOST_A}/api/keywords/trends`)
     .then(trends => {
-      commit('setTrends', trends);
+      if (trends.success) {
+        commit('setTrends', trends);
+      } else {
+        throw 'Google Trends API failed';
+      }
     })
     .catch(err => {
       console.error(err);
@@ -52,7 +56,7 @@ export const addArticleById = ( { commit, state }, id ) =>
     })
 
     if (!article) {
-      axios.get(`${HOST_B}/api/articles/${id}`)
+      axios.get(`${HOST_A}/api/articles/${id}`)
       .then(res => {
 
         state.articles.status = FetchStatus.COMPLETE
@@ -80,7 +84,7 @@ export const addArticlesBySourceId = ( { commit, state, getters }, id ) =>
       return resolve('Already have articles in store')
     }
 
-    axios.get(`${HOST_B}/api/sources/${id}`)
+    axios.get(`${HOST_A}/api/sources/${id}`)
       .then(response => {
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticles', response.data.filter(article =>
@@ -97,7 +101,7 @@ export const updateSourcePage = ({ commit, state }, pageNum) => {
 export const setSources = ({ commit, state }) =>
   new Promise((resolve, reject) => {
     state.sources.status = FetchStatus.LOADING
-    axios.get(`${HOST_B}/api/sources`)
+    axios.get(`${HOST_A}/api/sources`)
       .then(function (response) {
         let sources = []
         response.data.forEach(source => {
