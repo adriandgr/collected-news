@@ -1,8 +1,9 @@
 <template>
   <div class="ui center aligned container">
-    <SourceChart :data="allSources"> </SourceChart>
+    <SourceChart :data="allSources" > </SourceChart>
     <Trend v-for="trend in allTrends" :trend="trend"></Trend>
   </div>
+
 </template>
 
 <script>

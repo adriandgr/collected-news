@@ -60,10 +60,7 @@ export default {
     },
     isLoading () {
       return this.sources.status === FetchStatus.LOADING
-    },
-    ...mapActions([
-      'getSources'
-    ])
+    }
   }
 }
 </script>

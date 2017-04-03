@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Sources from '@/components/Sources'
 import Analytics from '@/components/Analytics'
+import SourceArticles from '@/components/SourceArticles'
 import Article from '@/components/Article'
 import KeywordPage from '@/components/KeywordPage'
 
@@ -12,15 +13,19 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
+      name: 'home',
       component: Home
     }, {
       path: '/sources',
-      name: 'Sources',
+      name: 'sources',
       component: Sources
     }, {
+      path: '/sources/:id',
+      name: 'source-articles',
+      component: SourceArticles
+    }, {
       path: '/article/:id',
-      name: 'Article',
+      name: 'article',
       component: Article
     }, {
       path: '/keyword/:key',

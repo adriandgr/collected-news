@@ -4,13 +4,17 @@ import * as getters from './getters'
 import * as actions from './actions'
 import * as mutations from './mutations'
 import FetchStatus from './constants/fetch-status'
+import lunr from 'lunr'
 
 Vue.use(Vuex)
+
 
 const state = {
   topArticles: {
     status: FetchStatus.INIT,
     pagination: 0,
+    busy: false,
+    neverLoaded: true,
     results: []
   },
   articles: {
@@ -25,6 +29,14 @@ const state = {
   keywords: {
     status: FetchStatus.INIT,
     results: []
+  },
+  lunr: {
+    status: FetchStatus.INIT,
+    idx: lunr(function () {
+      this.field('title', { boost: 10 })
+      this.field('snippet', {boost: 2})
+      this.field('content')
+  })
   },
   search: {
     status: FetchStatus.INIT,
