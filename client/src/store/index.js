@@ -49,7 +49,7 @@ const state = {
 
 const store = new Vuex.Store({
   state,
-  getters,
+  ...getters,
   actions,
   mutations
 })
