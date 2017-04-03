@@ -2,8 +2,8 @@ import axios from 'axios'
 import lunr from 'lunr'
 import FetchStatus from './constants/fetch-status'
 
-const HOST_B = 'http://10.10.41.105:8000'
-const HOST_A = 'http://localhost:8000'
+const HOST_A = 'http://10.10.41.105:8000'
+const HOST_B = 'http://localhost:8000'
 
 export const setTopKeywordArticles = ({ commit, state, getters }) =>
   new Promise((resolve, reject) => {
@@ -12,9 +12,8 @@ export const setTopKeywordArticles = ({ commit, state, getters }) =>
       state.topArticles.status = FetchStatus.COMPLETE
       commit('setTopArticles')
       resolve()
-    }, 3000)
-
-    axios.get(`${HOST_A}/api/keywords?p=${state.topArticles.pagination}`)
+    }, 3000
+    axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
       .then(response => {
         clearTimeout(timeoutId)
         state.topArticles.status = FetchStatus.COMPLETE
@@ -28,11 +27,9 @@ export const setTopKeywordArticles = ({ commit, state, getters }) =>
 export const toggleInfinitScroll = ({commit}) =>
   commit('toggleInfinitScroll')
 
-
 export const incrementKeywordPage = ({ commit, state }) => {
   commit('incrementKeywordPage')
 }
-
 
 export const retrieveTrends = ({ commit, state}, keywords) => {
   axios.get(`${HOST_A}/api/keywords/trends`)
@@ -51,22 +48,15 @@ export const retrieveTrends = ({ commit, state}, keywords) => {
 export const addArticleById = ( { commit, state }, id ) =>
   new Promise((resolve, reject) => {
     state.articles.status = FetchStatus.LOADING
-    const article = state.articles.results.find(a => {
-      return a.id === Number(id)
-    })
-
-    if (!article) {
-      axios.get(`${HOST_A}/api/articles/${id}`)
+    if (!state.articles.results.find(a => a.id === Number(id))) {
+      axios.get(`${HOST_B}/api/articles/${id}`)
       .then(res => {
-
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticles', [res.data])
         resolve()
       })
       .catch(error => reject(error))
-    } else {
-      resolve()
-    }
+    } else { resolve() }
   })
 
 export const addArticlesBySourceId = ( { commit, state, getters }, id ) =>
@@ -88,7 +78,7 @@ export const addArticlesBySourceId = ( { commit, state, getters }, id ) =>
       .then(response => {
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticles', response.data.filter(article =>
-          !getters.getArticleById(article.id)))
+          !getters.articleById(article.id)))
         resolve('Added new articles')
       })
       .catch(error => reject(error))
