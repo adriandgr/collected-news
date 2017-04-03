@@ -63,7 +63,6 @@ module.exports = {
       })
       .then(keywordsAndTrendData => {
         let [keywords, trendData] = keywordsAndTrendData;
-        let incoming;
         keywords = keywords.map((keyword, i) => {
           return {
             keywords: keyword,
