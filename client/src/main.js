@@ -6,6 +6,9 @@ import App from './App'
 import router from './router'
 import '../semantic/dist/semantic.min.css'
 import semantic from 'semantic' // importing semantic js
+import infiniteScroll from 'vue-infinite-scroll'
+
+Vue.use(infiniteScroll)
 
 Vue.directive('progress', {
   // When the bound element is inserted into the DOM...

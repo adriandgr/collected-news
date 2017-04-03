@@ -51,9 +51,11 @@ module.exports = {
     const id = req.params.id;
     return Article.all({
       where: [`"sourceId" = ${id}`],
-      order: '"pubDate" DESC'
+      order: '"pubDate" DESC',
     })
-      .then(articles => res.json(articles))
+      .then(source => res.json(source))
       .catch(err => console.error(err));
-  }
+  },
 };
+
+
