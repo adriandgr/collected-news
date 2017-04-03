@@ -26,3 +26,5 @@ export const articleSentiment = (state, getters) => (id) => {
 export const sources = state => state.sources
 export const keywords = state => state.keywords
 export const search = state => state.search
+
+export const trends = state => state.trends

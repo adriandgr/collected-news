@@ -29,6 +29,9 @@ const state = {
   search: {
     status: FetchStatus.INIT,
     results: []
+  },
+  trends: {
+    results: []
   }
 }
 

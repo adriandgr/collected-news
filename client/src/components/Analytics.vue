@@ -1,12 +1,13 @@
 <template>
   <div class="ui center aligned container">
     <SourceChart :data="allSources"> </SourceChart>
+    {{ retrieveTrends(['trump']) }}
   </div>
 </template>
 
 <script>
 import SourceChart from '@/components/partials/SourceChart.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'analytics',
@@ -17,7 +18,14 @@ export default {
     ]),
     allSources () {
       return this.sources.results
+    },
+    trends() {
     }
+  },
+  methods: {
+    ...mapActions([
+      'retrieveTrends'
+    ])
   }
 }
 </script>

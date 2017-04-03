@@ -1,5 +1,7 @@
 import axios from 'axios'
 import FetchStatus from './constants/fetch-status'
+import googleTrends from 'google-trends-api'
+import moment from 'moment'
 
 const HOST_B = 'http://10.10.41.105:8000'
 const HOST_A = 'http://localhost:8000'
@@ -35,6 +37,17 @@ export const setTopKeywordArticles = ({ commit, state }) => {
 export const incrementKeywordPage = ({ commit, state }) => {
   commit('incrementKeywordPage')
 }
+
+export const retrieveTrends = ({ commit, state}, keywords) => {
+  const trends = [];
+  keywords.forEach(keyword => {
+      console.log(googleTrends)
+    trends.push(
+      googleTrends.interestOverTime({ keyword: keyword, startTime: moment().subtract('years', 1)._d })
+    );
+  })
+  commit('setTrends', Promise.all(trends))
+};
 
 export const addArticleById = ( { commit, state }, id ) => {
   return new Promise((resolve, reject) => {

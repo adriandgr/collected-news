@@ -21,6 +21,10 @@ export const setSources = (state, sources) => {
 export const getKeywords = state => {
   state.keywords
 }
+export const setTrends = (state, trends) => {
+  console.log(trends);
+  state.trends.results = trends;
+}
 export const getSearchResults = (state, results) => {
   state.search.results = results
 }
