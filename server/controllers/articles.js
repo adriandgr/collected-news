@@ -13,7 +13,7 @@ module.exports = {
       'title',
       'snippet',
       'link',
-      'leadImageUrl'
+      'leadImageUrl',
       ]
     })
       .then((article) => res.status(200).send(article))

@@ -49,9 +49,11 @@ module.exports = {
   },
   individual(req, res) {
     const id = req.params.id;
-    return Source
-      .findById(id)
-      .then(source => res.json(source))
+    return Article.all({
+      where: [`"sourceId" = ${id}`],
+      order: '"pubDate" DESC'
+    })
+      .then(articles => res.json(articles))
       .catch(err => console.error(err));
   }
 };

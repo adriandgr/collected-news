@@ -48,6 +48,9 @@ export default {
       'sources',
       'getSourcePagintation'
     ]),
+    allSources () {
+      return this.sources.results
+    },
     sourceRange () {
       return this.paginateSources(this.getSourcePagintation)
     },
