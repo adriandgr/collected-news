@@ -36,8 +36,8 @@ export const incrementKeywordPage = ({ commit, state }) => {
   commit('incrementKeywordPage')
 }
 
-export const addArticleById = ( { commit, state }, id ) => {
-  return new Promise((resolve, reject) => {
+export const addArticleById = ( { commit, state }, id ) =>
+  new Promise((resolve, reject) => {
     state.articles.status = FetchStatus.LOADING
     const article = state.articles.results.find(a => {
       return a.id === Number(id)
@@ -45,53 +45,67 @@ export const addArticleById = ( { commit, state }, id ) => {
 
     if (!article) {
       axios.get(`${HOST_B}/api/articles/${id}`)
-      .then(function (res) {
+      .then(res => {
         state.articles.status = FetchStatus.COMPLETE
-        commit('addArticle', res.data)
+        commit('addArticles', [res.data])
         resolve()
       })
-      .catch(function (error) {
-        console.log(error)
-        reject()
-      })
+      .catch(error => reject(error))
     } else {
       resolve()
     }
-
-
   })
-}
+
+export const addArticlesBySourceId = ( { commit, state, getters }, id ) =>
+  new Promise((resolve, reject) => {
+    state.articles.status = FetchStatus.LOADING
+    const numArticles = state.articles.results.filter(a =>
+      a.sourceId === Number(id)).length
+    const source = state.sources.results.find(s =>
+      s.id === Number(id))
+    const expectedArticles = Number(source ? source.total_articles : 0)
+
+    console.log('Yo... I have', numArticles, 'expected', expectedArticles)
+    if (numArticles === expectedArticles) {
+      state.articles.status = FetchStatus.COMPLETE
+      return resolve('Already have articles in store')
+    }
+
+    axios.get(`${HOST_B}/api/sources/${id}`)
+      .then(response => {
+        state.articles.status = FetchStatus.COMPLETE
+        commit('addArticles', response.data.filter(article =>
+          !getters.getArticleById(article.id)))
+        resolve('Added new articles')
+      })
+      .catch(error => reject(error))
+  })
 
 export const updateSourcePage = ({ commit, state }, pageNum) => {
   commit('updateSourcePage', pageNum)
 }
 
-export const setSources = ({ commit, state }) => {
-  state.sources.status = FetchStatus.LOADING
-  const timeoutId = setTimeout(() => {
-    state.sources.status = FetchStatus.COMPLETE
-    commit('setSources')
-  }, 3000)
-
-  axios.get(`${HOST_B}/api/sources`)
-  .then(function (response) {
-    clearTimeout(timeoutId)
-    let sources = []
-    response.data.forEach(source => {
-      const entry = state.sources.results.find(entry => {
-        return entry.id === source.id
+export const setSources = ({ commit, state }) =>
+  new Promise((resolve, reject) => {
+    state.sources.status = FetchStatus.LOADING
+    axios.get(`${HOST_B}/api/sources`)
+      .then(function (response) {
+        let sources = []
+        response.data.forEach(source => {
+          const entry = state.sources.results.find(entry => {
+            return entry.id === source.id
+          })
+          if (!entry) {
+            sources.push(source)
+          }
+        })
+        state.sources.status = FetchStatus.COMPLETE
+        resolve(commit('setSources', sources))
       })
-      if (!entry) {
-        sources.push(source)
-      }
-    })
-    state.sources.status = FetchStatus.COMPLETE
-    commit('setSources', sources)
+      .catch(function (error) {
+        console.log(error)
+      })
   })
-  .catch(function (error) {
-    console.log(error)
-  })
-}
 
 export const getKeywords = ({ commit, state }) => {
   return new Promise((resolve, reject) => {

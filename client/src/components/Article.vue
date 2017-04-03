@@ -6,7 +6,12 @@
     <SentimentBar :sentiment="sentiment"></SentimentBar>
     <h1>{{ article.title }}</h1>
 
-    <p> <em>{{article.author || source }}</em> | {{pubDate}}</p>
+    <p>
+      <a :href="article.link" target="_blank">
+        <i class="external icon" title="read original"></i>
+      </a>
+      <em>{{article.author || source }}</em> | {{pubDate}}
+    </p>
     <img :src="article.leadImageUrl" class="leadArticleImg">
     <br><br>
 

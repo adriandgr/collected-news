@@ -6,7 +6,7 @@ export const getArticleById = (state, getters) => (id) =>
 
 export const getSourceById = (state, getters) => (id) => {
   let source = getters.sources.results.find(source => source.id === Number(id))
-  return source.name
+  return source
 }
 
 export const paginateSources = (state, getters) => (p) => {
@@ -18,6 +18,10 @@ export const paginateSources = (state, getters) => (p) => {
 }
 
 export const getSourcePagintation = state => state.sources.pagination
+
+export const getArticlesBySourceId = (state, getters) => (id) =>
+  getters.articles.results.filter(article => article.sourceId === Number(id))
+
 
 export const letterGrader = state => (sentiment) => {
 

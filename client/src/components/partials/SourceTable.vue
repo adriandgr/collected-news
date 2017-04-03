@@ -17,11 +17,15 @@
           <input type="checkbox" checked="checked"> <label></label>
         </div>
       </td>
-      <td ><img
-      class="source-logo"
-      :src="source.logoLink"
-      :alt="`logo for ${ source.name }`"
-      :title="source.name"></td>
+      <td >
+        <router-link :to="`/sources/${source.id}`">
+          <img
+          class="source-logo"
+          :src="source.logoLink"
+          :alt="`logo for ${ source.name }`"
+          :title="source.name">
+        </router-link>
+      </td>
       <td><strong>{{ source.name }}:</strong>
       {{source.description}}
       </td>

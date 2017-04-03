@@ -9,15 +9,13 @@ export const incrementKeywordPage = state => {
   //console.log('incremented pagination:', state.topArticles.pagination)
 }
 
-export const addArticle = (state, article) => {
-  state.articles.results.push(article)
+export const addArticles = (state, articles) => {
+  articles.forEach(article => state.articles.results.push(article))
 }
 
-export const setSources = (state, sources) => {
-  sources.forEach(source =>{
-    state.sources.results.push(source)
-  })
-}
+export const setSources = (state, sources) =>
+  sources.forEach(source => state.sources.results.push(source))
+
 export const getKeywords = state => {
   state.keywords
 }
