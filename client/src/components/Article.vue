@@ -36,18 +36,18 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getArticleById',
-      'getSourceById',
+      'articleById',
+      'sourceById',
       'articleSentiment'
     ]),
     pubDate() {
       return moment(this.article.pubDate).format('lll')
     },
     source() {
-      return this.getSourceById(Number(this.article.sourceId))
+      return this.sourceById(Number(this.article.sourceId))
     },
     article() {
-      let article = this.getArticleById(this.$route.params.id)
+      let article = this.articleById(this.$route.params.id)
       if (!article) {
         this.findArticle()
           .then((item) => {
@@ -76,12 +76,12 @@ export default {
     ]),
     findArticle () {
       return new Promise((resolve, reject) => {
-        let article = this.getArticleById(this.$route.params.id)
+        let article = this.articleById(this.$route.params.id)
         if (!article) {
           console.log('no article found', article)
         this.addArticleById(this.$route.params.id)
           .then((res) => {
-            resolve(this.getArticleById(this.$route.params.id))
+            resolve(this.articleById(this.$route.params.id))
           })
         }
       })

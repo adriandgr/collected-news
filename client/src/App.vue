@@ -18,7 +18,7 @@ export default {
     NavBar,
     Foot
   },
-  computed: mapGetters(['getArticleById']),
+  computed: mapGetters(['articleById']),
   methods: mapActions([
     'setTopKeywordArticles',
     'setSources',

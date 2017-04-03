@@ -46,7 +46,7 @@ export default {
     ...mapGetters([
       'paginateSources',
       'sources',
-      'getSourcePagintation'
+      'sourcePagintation'
     ]),
     allSources () {
       return this.sources.results

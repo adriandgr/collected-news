@@ -48,12 +48,12 @@ export default {
     next()
   },
   computed: {
-    ...mapGetters(['getArticlesBySourceId', 'getSourceById']),
+    ...mapGetters(['articlesBySourceId', 'sourceById']),
     articles() {
-      return this.getArticlesBySourceId(this.$route.params.id)
+      return this.articlesBySourceId(this.$route.params.id)
     },
     source () {
-      return this.getSourceById(this.$route.params.id)
+      return this.sourceById(this.$route.params.id)
     }
   },
   methods: mapActions(['addArticlesBySourceId','setSources']),
