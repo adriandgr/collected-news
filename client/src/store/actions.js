@@ -1,36 +1,58 @@
 import axios from 'axios'
+import lunr from 'lunr'
 import FetchStatus from './constants/fetch-status'
 
 const HOST_B = 'http://10.10.41.105:8000'
 const HOST_A = 'http://localhost:8000'
 
-export const setTopKeywordArticles = ({ commit, state }) => {
-  state.topArticles.status = FetchStatus.LOADING
-  const timeoutId = setTimeout(() => {
-    state.topArticles.status = FetchStatus.COMPLETE
-    commit('setTopArticles')
-  }, 3000)
+export const lunrExplorer = ({commit, state, getters}, article) => {
 
-  axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
-  .then(function (response) {
-    clearTimeout(timeoutId)
-    let articles = []
-    response.data.forEach(article => {
-      const entry = state.topArticles.results.find(entry => {
-        return entry.id === article.id
-      })
 
-      if (!entry) {
-        articles.push(article)
-      }
-    })
-    state.topArticles.status = FetchStatus.COMPLETE
-    commit('setTopArticles', articles)
-  })
-  .catch(function (error) {
-    console.log(error)
-  })
+    var doc = {
+      "title": "Twelfth-Night",
+      "content": "If music be the food of love, play on: Give me excess of it my love…",
+      "author": "William Shakespeare",
+      "id": 3
+  }
+  var doc2 = {
+      "title": "Apollo Love Mission",
+      "body": "That was very impressive, what lovely they did on the moon...",
+      "author": "William Shakespeare",
+      "id": 6
+  }
+  // idx.add(doc)
+  // idx.add(doc2)
+
+  getters.formatArticleDocById(31)
+
+  //console.log(idx.search("love"))
 }
+
+
+
+export const setTopKeywordArticles = ({ commit, state, getters }) =>
+  new Promise((resolve, reject) => {
+    state.topArticles.status = FetchStatus.LOADING
+    const timeoutId = setTimeout(() => {
+      state.topArticles.status = FetchStatus.COMPLETE
+      commit('setTopArticles')
+      resolve()
+    }, 3000)
+
+    axios.get(`${HOST_B}/api/keywords?p=${state.topArticles.pagination}`)
+      .then(response => {
+        clearTimeout(timeoutId)
+        state.topArticles.status = FetchStatus.COMPLETE
+        commit('setTopArticles', response.data.filter(article =>
+          !getters.topArticlesById(article.id)))
+        resolve()
+      })
+      .catch(error => reject(error))
+  })
+
+export const toggleInfinitScroll = ({commit}) =>
+  commit('toggleInfinitScroll')
+
 
 export const incrementKeywordPage = ({ commit, state }) => {
   commit('incrementKeywordPage')

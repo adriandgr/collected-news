@@ -9,11 +9,8 @@ module.exports = {
       .all({
       attributes: [
       'id',
-      'author',
       'title',
       'snippet',
-      'link',
-      'leadImageUrl'
       ]
     })
       .then((article) => res.status(200).send(article))

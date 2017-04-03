@@ -1,22 +1,25 @@
 <template>
 <div class="ui center aligned container">
+<div v-infinite-scroll="loadMore"
+        infinite-scroll-disabled="busy"
+        infinite-scroll-distance="10">
   <div v-if="isLoading" class="no-articles">
     <div class="ui active centered inline massive loader"></div>
     <p>{{ fetchMsg }}</p>
   </div>
+
   <div v-else>
 
     <div v-if="hasArticles" class="ui three stackable link cards">
-
         <Keyword v-for="article in topArticles.results" :article="article"></Keyword>
-        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10"> hello</div>
-    </div>
 
+    </div>
     <div v-else>
       no articles
     </div>
 
   </div>
+</div>
 </div>
 </template>
 
@@ -24,49 +27,50 @@
 import Keyword from '@/components/partials/Keyword'
 import { mapGetters, mapActions } from 'vuex'
 import FetchStatus from '@/store/constants/fetch-status'
-import infiniteScroll from 'vue-infinite-scroll'
-
-var count = 0
 
 export default {
   name: 'home',
   components: { Keyword },
-  directives: {infiniteScroll},
   data () {
     return {
       fetchMsg: 'waiting for articles ...',
-      data: [],
-      busy: false
+
     }
   },
   methods: {
     ...mapActions([
       'setTopKeywordArticles',
+      'toggleInfinitScroll',
       'incrementKeywordPage'
     ]),
-    loadMore: function() {
-      this.busy = true;
+    loadMore() {
+      this.toggleInfinitScroll()
       console.log('heyo!!')
+
       setTimeout(() => {
-        this.setTopKeywordArticles(),
+        this.setTopKeywordArticles()
+        this.incrementKeywordPage()
         console.log('get', this.topArticles.pagination)
-        this.busy = false;
-      }, 500);
+        this.toggleInfinitScroll()
+      }, 1000);
     }
   },
   computed: {
     ...mapGetters([
-      'topArticles'
+      'topArticles',
     ]),
-    distance () {
-      return this.nearBottom()
+    busy() {
+      return this.topArticles.busy
     },
     hasArticles () {
       let len = this.topArticles.results.length
       return len > 0
     },
     isLoading () {
-      return this.topArticles.status === FetchStatus.LOADING
+      if (this.topArticles.status === FetchStatus.LOADING ) {
+        this.topArticles.neverLoaded = false
+      }
+      return this.topArticles.status === FetchStatus.LOADING && this.neverLoaded === true
     }
   }
 }
