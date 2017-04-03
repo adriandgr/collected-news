@@ -60,19 +60,27 @@ module.exports = {
           .then(trendData => {
             return [keywords, trendData]
           })
+          .catch(err => {
+            res.json({ success: 'false' });
+            return null;
+          });
       })
       .then(keywordsAndTrendData => {
-        let [keywords, trendData] = keywordsAndTrendData;
-        keywords = keywords.map((keyword, i) => {
-          return {
-            keyword: keyword,
-            dataPoints: JSON.parse(trendData[i])
-                            .default
-                            .timelineData
-                            .map(interval => { return interval.value[0] })
-          }
-        });
-        res.json(keywords);
+        if(keywordsAndTrendData) {
+          let [keywords, trendData] = keywordsAndTrendData;
+          keywords = keywords.map((keyword, i) => {
+            return {
+              keyword: keyword,
+              dataPoints: JSON.parse(trendData[i])
+                              .default
+                              .timelineData
+                              .map(interval => { return interval.value[0] })
+            }
+          });
+          res.json({ success: true, keywords: keywords });
+        } else {
+          console.error('Google Trends API failed: too many requests');
+        }
       })
   }
 };
