@@ -43,10 +43,10 @@
           <a class="icon item" @click="prevPage">
             <i class="left chevron icon"></i>
           </a>
-          <a class="item" :class="{active: this.getSourcePagintation === 0}" @click="setPage">1</a>
-          <a class="item" :class="{active: this.getSourcePagintation === 1}" @click="setPage">2</a>
-          <a class="item" :class="{active: this.getSourcePagintation === 2}" @click="setPage">3</a>
-          <a class="item" :class="{active: this.getSourcePagintation === 3}" @click="setPage">4</a>
+          <a class="item" :class="{active: this.sourcePagintation === 0}" @click="setPage">1</a>
+          <a class="item" :class="{active: this.sourcePagintation === 1}" @click="setPage">2</a>
+          <a class="item" :class="{active: this.sourcePagintation === 2}" @click="setPage">3</a>
+          <a class="item" :class="{active: this.sourcePagintation === 3}" @click="setPage">4</a>
           <a class="icon item" @click="nextPage">
             <i class="right chevron icon"></i>
           </a>
@@ -67,7 +67,7 @@ export default {
   name: 'sourceTable',
   props: ['sources'],
   computed: mapGetters([
-    'getSourcePagintation',
+    'sourcePagintation',
     'letterGrader'
   ]),
   methods: {
@@ -91,15 +91,15 @@ export default {
     },
     setPage (event) {
       this.updateSourcePage(Number(event.target.innerText) - 1)
-      console.log(this.getSourcePagintation)
+      console.log(this.sourcePagintation)
       //console.log(event.target.innerText)
     },
     prevPage () {
-      let targetPage = this.getSourcePagintation - 1
+      let targetPage = this.sourcePagintation - 1
       this.updateSourcePage(targetPage)
     },
     nextPage () {
-      let targetPage = this.getSourcePagintation + 1
+      let targetPage = this.sourcePagintation + 1
       this.updateSourcePage(targetPage)
     }
   }
