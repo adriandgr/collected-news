@@ -24,11 +24,6 @@ export default {
       'trends'
     ]),
     allSources () {
-      if(!this.sources.results){
-        this.setSources().then(res => {
-          return this.sources.results
-        })
-      }
       return this.sources.results
     },
     allTrends() {
