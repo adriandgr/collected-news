@@ -15,7 +15,7 @@ export default {
   name: 'analytics',
   components: { SourceChart, Trend },
   mounted () {
-    this.retrieveTrends();
+    // this.retrieveTrends();
     this.setSources();
   },
   computed: {
