@@ -8,17 +8,16 @@ import Hosts from '../constants/hosts'
 import lunr from 'lunr'
 
 
-export const buildArticleIndex = ({ commit, state }) => {
+export const buildArticleIndex = ({ commit, state, getters }) => {
   return new Promise ((resolve, reject) => {
     state.lunr.status = FetchStatus.LOADING
-    let results = []
     axios.get(`${Hosts.ACTIVE}/api/articles/all`)
     .then(response => {
-      response.data.forEach(article => {
-        results.push(article)
-      })
+      const newDocs = response.data.filter(doc =>
+        !getters.lunrDocById(doc.id))
       state.lunr.status = FetchStatus.COMPLETE
-      commit('addLunrArticleDoc', results)
+      commit('addLunrArticleDoc', newDocs)
+      commit('indexLunrArticleDoc', newDocs)
       resolve()
     })
     .catch(error => reject(error))

@@ -5,6 +5,12 @@
 
 export const addLunrArticleDoc = (state, docs) => {
   docs.forEach(doc => {
+    state.lunr.docs.push(doc)
+  })
+}
+
+export const indexLunrArticleDoc = (state, docs) => {
+  docs.forEach(doc => {
     state.lunr.idx.add(doc)
   })
 }

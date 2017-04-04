@@ -27,7 +27,9 @@ export const state = {
     idx: lunr(function () {
       this.field('title', { boost: 10 })
       this.field('snippet')
-    })
+      this.field('pubDate')
+    }),
+    docs: []
   },
   keyLunr: {
     status: FetchStatus.INIT,
