@@ -48,7 +48,7 @@ export default {
     return {
       searchTerm: '',
       loading: false,
-      keys: this.$store.getters.keywords.results
+      //keys: this.$store.getters.keywords.results
     }
   },
   computed: {
