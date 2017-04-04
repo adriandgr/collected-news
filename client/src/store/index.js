@@ -34,11 +34,17 @@ const state = {
     status: FetchStatus.INIT,
     idx: lunr(function () {
       this.field('title', { boost: 10 })
-      this.field('snippet', {boost: 2})
-      this.field('content')
-  })
+      this.field('snippet')
+    })
   },
-  search: {
+  keyLunr: {
+    status: FetchStatus.INIT,
+    idx: lunr(function () {
+      this.field('title', { boost: 10 })
+      this.field('snippet')
+    })
+  },
+  keywordSearch: {
     status: FetchStatus.INIT,
     results: []
   },
