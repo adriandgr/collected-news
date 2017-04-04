@@ -1,10 +1,15 @@
 /*
- *  Articles by top frequency keyword (homepage view)
+ *  Getters for articles by top frequency keyword (homepage view)
  */
 
-export const keywords = state => state.keywords
+export const keywords = state =>
+  state.keywords
 
-export const topArticles = state => state.topArticles
-export const topArticlesById = (state, getters) => (id) => getters.topArticles.results.find(article => article.id === Number(id))
+export const topArticles = state =>
+  state.topArticles
 
-export const topKeywords = state => state.keywords.top
+export const topArticlesById = (state, getters) => (id) =>
+  getters.topArticles.results.find(article => article.id === Number(id))
+
+export const topKeywords = state =>
+  state.keywords.top
