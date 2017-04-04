@@ -20,19 +20,19 @@
           <input
             class="prompt"
             type="text"
-            placeholder="Search Keywordss"
+            placeholder="Search by"
             @keyup.enter="hit"
             @blur="reset"
             @input="searching"
             v-model="searchTerm">
           <i class="search icon"></i>
-          <div class="ui basic floating dropdown button" id="search-by">
-            <div class="text">by</div>
+          <div class="ui basic floating dropdown button" value="keyword-search" id="search-by">
+            <div class="text">keyword</div>
             <i class="dropdown icon"></i>
             <div class="menu">
-              <div class="item" data-value="keyword">keyword</div>
-              <div class="item" data-value="article">article</div>
-              <div class="item" data-value="source">source</div>
+              <div class="item" data-value="keyword-search">keyword</div>
+              <div class="item" data-value="article-search" @click="searchingBy()">article</div>
+              <div class="item" data-value="source-search">source</div>
             </div>
           </div>
         </div>
@@ -88,10 +88,21 @@ export default {
       ''
     ]),
     hit () {
-      this.$router.push({ name: 'keyword', params: { key: this.searchTerm }})
+      let route = $('#search-by').dropdown('get value') || 'keyword-search'
+      this.$router.push({ name: route, params: { key: this.searchTerm }})
       this.searchTerm = ''
-      console.log('search by', $('#search-by').dropdown('get value'))
+      console.log('search by', route)
 
+    },
+    searchingBy() {
+      let search = $('#search-by').dropdown('get value')
+      if (search === 'article-search') {
+        return 'Search articles'
+      }
+      if (search === 'source-search') {
+        return 'Search sources'
+      }
+      return 'Search keywords'
     },
     reset () {
       this.searchTerm = ''

@@ -2,7 +2,23 @@
  *  Lunr Search Helper Getters
  */
 
-export const search = state => state.search
+export const keywordSearch = state => state.keywordSearch
+
+export const articleSearch = (state, getters) => (query) => {
+  const res = state.lunr.idx.search(query)
+  if (!res) {
+    return
+  }
+  let ids = []
+  res.forEach(hit => {
+    ids.push(hit.ref)
+  })
+  if (ids.length > 20) {
+    ids = ids.slice(0, 20)
+  }
+  return ids
+}
+
 
 export const lunr = (state) => state.lunr
 export const formatArticleDocById = (state, getters) => (id) => {

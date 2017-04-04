@@ -31,6 +31,12 @@ module.exports = {
       res.json(data);
     })
   },
+  allStats(req, res) {
+    let keyword = req.params.keyword
+    keywords.individual(keyword, data => {
+      res.json(data);
+    })
+  },
   trends(req, res) {
     console.log('got here');
     ArticleKeyword.all({
