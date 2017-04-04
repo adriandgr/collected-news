@@ -26,6 +26,7 @@ module.exports = (app) => {
 
   // Keywords
   app.get('/api/keywords', keywordsController.index); // limits top 6 keywords ordered by frequency relationship to articles
+ app.get('/api/keywords/top', keywordsController.top);
   app.get('/api/keywords/all', keywordsController.all); // list all keywords
   app.get('/api/keywords/trends', keywordsController.trends);
   app.get('/api/keywords/stats', keywordsController.allStats);

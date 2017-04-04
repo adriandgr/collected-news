@@ -33,8 +33,16 @@ export const incrementKeywordPage = ({ commit, state }) => {
 
 export const retrieveTrends = ({ commit, state}, keywords) => {
   axios.get(`${HOST_A}/api/keywords/trends`)
-    .then(trends => commit('setTrends', trends))
-    .catch(err => console.error(err));
+    .then(trends => {
+      if (trends.success) {
+        commit('setTrends', trends);
+      } else {
+        throw 'Google Trends API failed';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
 };
 
 export const addArticleById = ( { commit, state }, id ) =>
@@ -66,7 +74,7 @@ export const addArticlesBySourceId = ( { commit, state, getters }, id ) =>
       return resolve('Already have articles in store')
     }
 
-    axios.get(`${HOST_B}/api/sources/${id}`)
+    axios.get(`${HOST_A}/api/sources/${id}`)
       .then(response => {
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticles', response.data.filter(article =>
@@ -83,7 +91,7 @@ export const updateSourcePage = ({ commit, state }, pageNum) => {
 export const setSources = ({ commit, state }) =>
   new Promise((resolve, reject) => {
     state.sources.status = FetchStatus.LOADING
-    axios.get(`${HOST_B}/api/sources`)
+    axios.get(`${HOST_A}/api/sources`)
       .then(function (response) {
         let sources = []
         response.data.forEach(source => {
@@ -179,4 +187,14 @@ export const getKeywordSearch = ({ commit, state }, query) => {
 
   })
 
+}
+
+export const getTopKeywords = ({ commit, state }) => {
+  axios.get(`${HOST_B}/api/keywords/top`)
+    .then(res => {
+      commit('setTopKeywords', res.data)
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }

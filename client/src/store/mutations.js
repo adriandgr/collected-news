@@ -47,4 +47,6 @@ export const indexArticle = (state, article) => {
   state.lunr.idx.add(article)
 }
 
-
+export const setTopKeywords = (state, topKeywords) => {
+  state.keywords.top = topKeywords;
+}

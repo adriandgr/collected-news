@@ -31,6 +31,35 @@ module.exports = {
       res.json(data);
     })
   },
+  top(req, res) {
+    ArticleKeyword.all({
+      attributes: ['keywordId', 'frequency'],
+      order: '"frequency" DESC',
+      limit: 10
+    })
+      .then(instances => {
+        let keywords = [];
+        let frequencies = [];
+        instances.forEach(instance => {
+          keywords.push(Keyword.findById(instance.dataValues.keywordId));
+          frequencies.push(instance.dataValues.frequency);
+        });
+        return Promise.all(keywords)
+          .then(keywordInstances => {
+            return Promise.resolve([keywordInstances, frequencies])
+          });
+      })
+      .then(keywordInstancesAndFrequencies => {
+        const [keywordInstances, frequencies] = keywordInstancesAndFrequencies;
+        let keywordsAndFrequencies = []
+        keywordInstances.forEach((instance, i) => {
+          keywordsAndFrequencies.push(
+            { keyword: instance.name, frequency: frequencies[i] }
+          );
+        });
+        res.json(keywordsAndFrequencies);
+      })
+  },
   allStats(req, res) {
     let keyword = req.params.keyword
     keywords.individual(keyword, data => {
@@ -38,7 +67,6 @@ module.exports = {
     })
   },
   trends(req, res) {
-    console.log('got here');
     ArticleKeyword.all({
       attributes: ['keywordId'],
       order: '"frequency" DESC',
@@ -67,19 +95,27 @@ module.exports = {
           .then(trendData => {
             return [keywords, trendData]
           })
+          .catch(err => {
+            res.json({ success: 'false' });
+            return null;
+          });
       })
       .then(keywordsAndTrendData => {
-        let [keywords, trendData] = keywordsAndTrendData;
-        keywords = keywords.map((keyword, i) => {
-          return {
-            keyword: keyword,
-            dataPoints: JSON.parse(trendData[i])
-                            .default
-                            .timelineData
-                            .map(interval => { return interval.value[0] })
-          }
-        });
-        res.json(keywords);
+        if(keywordsAndTrendData) {
+          let [keywords, trendData] = keywordsAndTrendData;
+          keywords = keywords.map((keyword, i) => {
+            return {
+              keyword: keyword,
+              dataPoints: JSON.parse(trendData[i])
+                              .default
+                              .timelineData
+                              .map(interval => { return interval.value[0] })
+            }
+          });
+          res.json({ success: true, keywords: keywords });
+        } else {
+          console.error('Google Trends API failed: too many requests');
+        }
       })
   }
 };
