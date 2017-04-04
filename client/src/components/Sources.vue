@@ -46,8 +46,11 @@ export default {
     ...mapGetters([
       'paginateSources',
       'sources',
-      'getSourcePagintation'
+      'sourcePagintation'
     ]),
+    allSources () {
+      return this.sources.results
+    },
     sourceRange () {
       return this.paginateSources(this.getSourcePagintation)
     },
@@ -57,10 +60,7 @@ export default {
     },
     isLoading () {
       return this.sources.status === FetchStatus.LOADING
-    },
-    ...mapActions([
-      'getSources'
-    ])
+    }
   }
 }
 </script>

@@ -3,40 +3,16 @@ import Vuex from 'vuex'
 import * as getters from './getters'
 import * as actions from './actions'
 import * as mutations from './mutations'
-import FetchStatus from './constants/fetch-status'
+import * as state from './state'
+
 
 Vue.use(Vuex)
 
-const state = {
-  topArticles: {
-    status: FetchStatus.INIT,
-    pagination: 0,
-    results: []
-  },
-  articles: {
-    status: FetchStatus.INIT,
-    results: []
-  },
-  sources: {
-    status: FetchStatus.INIT,
-    pagination: 0,
-    results: []
-  },
-  keywords: {
-    status: FetchStatus.INIT,
-    results: []
-  },
-  search: {
-    status: FetchStatus.INIT,
-    results: []
-  }
-}
-
 const store = new Vuex.Store({
-  state,
-  getters,
-  actions,
-  mutations
+  ...state,
+  ...getters,
+  ...actions,
+  ...mutations
 })
 
 if (module.hot) {

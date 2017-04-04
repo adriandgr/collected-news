@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+
     <NavBar></NavBar>
     <router-view></router-view>
     <Foot></Foot>
@@ -17,14 +18,16 @@ export default {
     NavBar,
     Foot
   },
-  computed: mapGetters(['getArticleById']),
+  computed: mapGetters(['articleById']),
   methods: mapActions([
     'setTopKeywordArticles',
     'setSources',
-    'addArticleById'
+    'addArticleById',
+    'getKeywords'
   ]),
   created () {
     this.setSources(),
+    this.getKeywords()
     this.setTopKeywordArticles()
   }
 }

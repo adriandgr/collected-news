@@ -1,9 +1,4 @@
 const insertInto = require('./insert');
-const normalizeSentiment = require('./sentiment/normalize');
-
-function normalizeSentiments() {
-
-}
 
 function insert(entry) {
   const keywords = entry.keywords.map(keyword => {

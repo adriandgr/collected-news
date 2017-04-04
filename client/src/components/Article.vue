@@ -5,8 +5,21 @@
 
     <SentimentBar :sentiment="sentiment"></SentimentBar>
     <h1>{{ article.title }}</h1>
+
+    <p>
+
+
+  <a :href="article.link" target="_blank" data-inverted="" data-tooltip="Open original source" data-position="left center">
+        <i class="external icon" ></i>
+      </a>
+
+
+
+      <em>{{article.author || source }}</em> | {{pubDate}}
+    </p>
     <img :src="article.leadImageUrl" class="leadArticleImg">
     <br><br>
+
     <p>{{ firstParagraph }}</p>
 
     <p v-for="p in restOfContent" > {{p}}</p>
@@ -19,6 +32,7 @@
 <script>
 import SentimentBar from '@/components/partials/SentimentBar'
 import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'article',
@@ -27,11 +41,18 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getArticleById',
+      'articleById',
+      'sourceById',
       'articleSentiment'
     ]),
+    pubDate() {
+      return moment(this.article.pubDate).format('lll')
+    },
+    source() {
+      return this.sourceById(Number(this.article.sourceId))
+    },
     article() {
-      let article = this.getArticleById(this.$route.params.id)
+      let article = this.articleById(this.$route.params.id)
       if (!article) {
         this.findArticle()
           .then((item) => {
@@ -60,12 +81,12 @@ export default {
     ]),
     findArticle () {
       return new Promise((resolve, reject) => {
-        let article = this.getArticleById(this.$route.params.id)
+        let article = this.articleById(this.$route.params.id)
         if (!article) {
           console.log('no article found', article)
         this.addArticleById(this.$route.params.id)
           .then((res) => {
-            resolve(this.getArticleById(this.$route.params.id))
+            resolve(this.articleById(this.$route.params.id))
           })
         }
       })
