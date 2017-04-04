@@ -41,6 +41,7 @@ export const state = {
     results: []
   },
   trends: {
-    results: []
+    results: [],
+    top: []
   }
 }
