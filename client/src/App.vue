@@ -22,10 +22,12 @@ export default {
   methods: mapActions([
     'setTopKeywordArticles',
     'setSources',
-    'addArticleById'
+    'addArticleById',
+    'getKeywords'
   ]),
   created () {
     this.setSources(),
+    this.getKeywords()
     this.setTopKeywordArticles()
   }
 }

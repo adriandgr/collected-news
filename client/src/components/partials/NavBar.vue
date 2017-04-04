@@ -15,15 +15,17 @@
       <router-link to="/analytics" class="item">Analytics</router-link>
 
       <div class="floated right item">
+      <div class="ui">
         <div class="ui right action left icon input">
-          <i class="search icon"></i>
           <input
+            class="prompt"
             type="text"
-            placeholder="Search"
+            placeholder="Search Keywordss"
             @keyup.enter="hit"
             @blur="reset"
             @input="searching"
             v-model="searchTerm">
+          <i class="search icon"></i>
           <div class="ui basic floating dropdown button" id="search-by">
             <div class="text">by</div>
             <i class="dropdown icon"></i>
@@ -34,7 +36,30 @@
             </div>
           </div>
         </div>
-    </div>
+      </div>
+      </div>
+      <!-- <div class="floated right item">
+        <div class="ui right action left icon input">
+          <input
+            class="prompt"
+            type="text"
+            placeholder="Search"
+            @keyup.enter="hit"
+            @blur="reset"
+            @input="searching"
+            v-model="searchTerm">
+            <i class="search icon"></i>
+          <div class="ui basic floating dropdown button" id="search-by">
+            <div class="text">by</div>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div class="item" data-value="keyword">keyword</div>
+              <div class="item" data-value="article">article</div>
+              <div class="item" data-value="source">source</div>
+            </div>
+          </div>
+        </div>
+      </div> -->
     </div>
   </div>
 
@@ -42,6 +67,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'navBar',
   data() {
@@ -52,15 +79,18 @@ export default {
     }
   },
   computed: {
-    keywords() {
-      return this.$store.getters.keywords.results
-    }
+    ...mapGetters([
+      'keywords'
+    ])
   },
   methods: {
+    ...mapActions([
+      ''
+    ]),
     hit () {
       this.$router.push({ name: 'keyword', params: { key: this.searchTerm }})
       this.searchTerm = ''
-      //console.log('search by', $('#search-by').dropdown('get value'))
+      console.log('search by', $('#search-by').dropdown('get value'))
 
     },
     reset () {
@@ -78,11 +108,34 @@ export default {
     }
   },
   mounted: function () {
-    this.$nextTick(function () {
-      // code that assumes this.$el is in-document
-      $(document)
-        .ready(function() {
-          // fix main menu to page on passing
+    var content = [
+    {
+      title: 'Horse',
+      description: 'An Animal',
+    },
+    {
+      title: 'Cow',
+      description: 'Another Animal',
+    }
+  ];
+
+
+    $('.ui.search')
+      .search({
+        source : this.keywords.results,
+        searchFields   : [
+          'name'
+        ],
+        fields: {
+      title   : 'name',
+
+    },
+        minCharacters : 1
+      })
+    ;
+
+
+    // fix main menu to page on passing
           $('.main.menu').visibility({
             type: 'fixed'
           });
@@ -90,17 +143,16 @@ export default {
           $('.main.menu  .ui.dropdown').dropdown({
             on: 'click'
           });
-          var content = this
 
-          $('.ui.search')
-            .search({
-              source : content,
-              searchFields   : [
-                'name'
-              ],
-              searchFullText: false
-            })
-          ;
+
+    this.$nextTick(function () {
+      // code that assumes this.$el is in-document
+      $(document)
+        .ready(function() {
+
+
+
+
 
           //   .search({
           //     apiSettings: {
@@ -121,7 +173,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .results.transition.visible {
+    font-size: 2em;
+  }
   .main.container {
     margin-top: 2em;
   }
