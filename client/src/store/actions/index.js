@@ -4,7 +4,7 @@ import * as lunr from './lunr'
 import * as sources from './sources'
 import * as trends from './trends'
 
-export const getters = {
+export const actions = {
   ...articles,
   ...keywords,
   ...lunr,
