@@ -3,13 +3,15 @@ import { HorizontalBar } from 'vue-chartjs'
 export default HorizontalBar.extend({
   props: ['data'],
   mounted () {
+    console.log('chart');
+    console.log(this.data);
     const keywords = this.data.map(pairs => { return pairs.keyword });
     const frequencies = this.data.map(pairs => { return pairs.frequency });
     this.renderChart({
       labels: keywords,
       datasets: [
         {
-          backgroundColor: '#EEEE',
+          backgroundColor: '#393E46',
           data: frequencies
         }
       ]

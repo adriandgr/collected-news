@@ -166,3 +166,13 @@ export const getSearchResults = ({ commit, state }, query) => {
   })
 
 }
+
+export const getTopKeywords = ({ commit, state }) => {
+  axios.get(`${HOST_B}/api/keywords/top`)
+    .then(res => {
+      commit('setTopKeywords', res.data)
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}

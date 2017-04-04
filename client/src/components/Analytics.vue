@@ -1,7 +1,9 @@
 <template>
   <div class="ui center aligned container">
-    <SourceChart :data="allSources" > </SourceChart>
-    <Trend v-for="trend in allTrends" :trend="trend"></Trend>
+    <SourceChart :data="allSources"></SourceChart>
+    <br>
+    <KeywordChart :data="topKeywords"></KeywordChart>
+    <!-- <Trend v-for="trend in allTrends" :trend="trend"></Trend> -->
     <div class="ui segment raised stat">
       <h1 class="ui">{{ numArticles }} Articles</h1>
     </div>
@@ -17,29 +19,35 @@
 
 <script>
 import SourceChart from '@/components/partials/SourceChart.js'
+import KeywordChart from '@/components/partials/KeywordChart.js'
 import Trend from '@/components/partials/Trend'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'analytics',
-  components: { SourceChart, Trend },
+  components: {
+    SourceChart,
+    Trend,
+    KeywordChart
+  },
   mounted () {
     // this.retrieveTrends();
     this.setSources();
     this.getKeywords();
+    this.getTopKeywords();
   },
   computed: {
     ...mapGetters([
       'sources',
-      'trends',
-      'keywords'
+      // 'trends',
+      'keywords',
     ]),
     allSources () {
       return this.sources.results
     },
-    allTrends() {
-      return this.trends.results.data
-    },
+    // allTrends() {
+    //   return this.trends.results.data
+    // },
     numSources () {
       return this.sources.results.length
     },
@@ -52,13 +60,17 @@ export default {
     },
     numKeywords () {
       return this.keywords.results.length;
+    },
+    topKeywords () {
+      return this.keywords.top;
     }
   },
   methods: {
     ...mapActions([
       'retrieveTrends',
       'setSources',
-      'getKeywords'
+      'getKeywords',
+      'getTopKeywords'
     ])
   }
 }

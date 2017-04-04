@@ -31,6 +31,35 @@ module.exports = {
       res.json(data);
     })
   },
+  top(req, res) {
+    ArticleKeyword.all({
+      attributes: ['keywordId', 'frequency'],
+      order: '"frequency" DESC',
+      limit: 10
+    })
+      .then(instances => {
+        let keywords = [];
+        let frequencies = [];
+        instances.forEach(instance => {
+          keywords.push(Keyword.findById(instance.dataValues.keywordId));
+          frequencies.push(instance.dataValues.frequency);
+        });
+        return Promise.all(keywords)
+          .then(keywordInstances => {
+            return Promise.resolve([keywordInstances, frequencies])
+          });
+      })
+      .then(keywordInstancesAndFrequencies => {
+        const [keywordInstances, frequencies] = keywordInstancesAndFrequencies;
+        let keywordsAndFrequencies = []
+        keywordInstances.forEach((instance, i) => {
+          keywordsAndFrequencies.push(
+            { keyword: instance.name, frequency: frequencies[i] }
+          );
+        });
+        res.json(keywordsAndFrequencies);
+      })
+  },
   trends(req, res) {
     ArticleKeyword.all({
       attributes: ['keywordId'],
