@@ -29,8 +29,14 @@ export const getKeywords = state => {
 export const setTrends = (state, trends) => {
   state.trends.results = trends;
 }
-export const getSearchResults = (state, results) => {
-  state.search.results = results
+export const addLunrArticleDoc = (state, docs) => {
+  docs.forEach(doc => {
+    state.lunr.idx.add(doc)
+  })
+}
+
+export const getKeywordSearch = (state, results) => {
+  state.keywordSearch.results = results
 }
 
 export const updateSourcePage = (state, pageNum) => {

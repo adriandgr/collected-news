@@ -53,7 +53,7 @@ export const addArticleById = ( { commit, state }, id ) =>
       .then(res => {
         state.articles.status = FetchStatus.COMPLETE
         commit('addArticles', [res.data])
-        resolve()
+        resolve(res.data)
       })
       .catch(error => reject(error))
     } else { resolve() }
@@ -143,9 +143,31 @@ export const getKeywords = ({ commit, state }) => {
   })
 }
 
-export const getSearchResults = ({ commit, state }, query) => {
+export const buildArticleIndex = ({ commit, state }) => {
   return new Promise ((resolve, reject) => {
-    state.search.status = FetchStatus.LOADING
+    state.lunr.status = FetchStatus.LOADING
+    let results = []
+    axios.get(`${HOST_A}/api/articles/all`)
+    .then(response => {
+      response.data.forEach(article => {
+        results.push(article)
+      })
+      state.lunr.status = FetchStatus.COMPLETE
+      commit('addLunrArticleDoc', results)
+      resolve()
+    })
+    .catch(function (error) {
+      console.log(error)
+      reject()
+    })
+
+  })
+
+}
+
+export const getKeywordSearch = ({ commit, state }, query) => {
+  return new Promise ((resolve, reject) => {
+    state.keywordSearch.status = FetchStatus.LOADING
     console.log(query)
     let results = []
     axios.get(`${HOST_A}/api/keywords/${query}`)
@@ -154,8 +176,8 @@ export const getSearchResults = ({ commit, state }, query) => {
       response.data.forEach(article => {
         results.push(article)
       })
-      state.keywords.status = FetchStatus.COMPLETE
-      commit('getSearchResults', results)
+      state.keywordSearch.status = FetchStatus.COMPLETE
+      commit('getKeywordSearch', results)
       resolve()
     })
     .catch(function (error) {

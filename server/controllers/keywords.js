@@ -60,6 +60,12 @@ module.exports = {
         res.json(keywordsAndFrequencies);
       })
   },
+  allStats(req, res) {
+    let keyword = req.params.keyword
+    keywords.individual(keyword, data => {
+      res.json(data);
+    })
+  },
   trends(req, res) {
     ArticleKeyword.all({
       attributes: ['keywordId'],

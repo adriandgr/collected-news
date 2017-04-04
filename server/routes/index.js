@@ -29,6 +29,7 @@ module.exports = (app) => {
  app.get('/api/keywords/top', keywordsController.top);
   app.get('/api/keywords/all', keywordsController.all); // list all keywords
   app.get('/api/keywords/trends', keywordsController.trends);
+  app.get('/api/keywords/stats', keywordsController.allStats);
   app.get('/api/keywords/:keyword', keywordsController.individual); // api endpoint for search by keyword
 
   // Articles

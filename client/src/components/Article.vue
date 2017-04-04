@@ -7,9 +7,14 @@
     <h1>{{ article.title }}</h1>
 
     <p>
-      <a :href="article.link" target="_blank">
-        <i class="external icon" title="read original"></i>
+
+
+  <a :href="article.link" target="_blank" data-inverted="" data-tooltip="Open original source" data-position="left center">
+        <i class="external icon" ></i>
       </a>
+
+
+
       <em>{{article.author || source }}</em> | {{pubDate}}
     </p>
     <img :src="article.leadImageUrl" class="leadArticleImg">

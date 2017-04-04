@@ -5,7 +5,9 @@ import Sources from '@/components/Sources'
 import Analytics from '@/components/Analytics'
 import SourceArticles from '@/components/SourceArticles'
 import Article from '@/components/Article'
-import KeywordPage from '@/components/KeywordPage'
+import KeywordSearch from '@/components/KeywordSearch'
+import ArticleSearch from '@/components/ArticleSearch'
+import SourceSearch from '@/components/SourceSearch'
 
 Vue.use(Router)
 
@@ -28,9 +30,17 @@ export default new Router({
       name: 'article',
       component: Article
     }, {
-      path: '/keyword/:key',
-      name: 'keyword',
-      component: KeywordPage
+      path: '/search/keyword/:key',
+      name: 'keyword-search',
+      component: KeywordSearch
+    }, {
+      path: '/search/article/:key',
+      name: 'article-search',
+      component: ArticleSearch
+    }, {
+      path: '/search/source/:key',
+      name: 'source-search',
+      component: SourceSearch
     }, {
       path: '/analytics',
       name: 'analytics',

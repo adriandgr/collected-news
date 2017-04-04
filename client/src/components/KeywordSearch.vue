@@ -1,9 +1,9 @@
 <template>
   <div>
 
-    <div v-if="search.results.length" class ="ui container" >
+    <div v-if="keywordSearch.results.length" class ="ui container" >
       <h1>Search results for <em>{{$route.params.key}}</em></h1>
-      <SearchHit v-for="result in search.results" :result="result"></SearchHit>
+      <SearchHit v-for="result in keywordSearch.results" :result="result"></SearchHit>
     </div>
 
     <div v-else class ="ui raised container segment no-results">
@@ -22,7 +22,7 @@ import SearchHit from '@/components/partials/SearchHit'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'keywordPage',
+  name: 'keywordSearch',
   components: {
     SearchHit
   },
@@ -32,11 +32,11 @@ export default {
   },
   computed: mapGetters([
     'keywords',
-    'search'
+    'keywordSearch'
   ]),
   methods: {
     ...mapActions([
-      'getSearchResults',
+      'getKeywordSearch',
       'getKeywords'
     ]),
     match () {
@@ -46,11 +46,12 @@ export default {
           this.keywords.results.forEach( keyword => {
             if (keyword.name == this.$route.params.key.toLowerCase()) {
               matched = true
-              this.$store.dispatch('getSearchResults', keyword.name)
+              console.log(keyword.name)
+              this.$store.dispatch('getKeywordSearch', keyword.name)
             }
           })
           if (!matched) {
-            this.$store.dispatch('getSearchResults')
+            this.$store.dispatch('getKeywordSearch')
           }
         })
     }
