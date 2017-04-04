@@ -23,11 +23,11 @@ export const state = {
     results: []
   },
   lunr: {
-    status: FetchStatus.INIT,
+    status: 0,
     idx: lunr(function () {
       this.field('title', { boost: 10 })
       this.field('snippet')
-      this.field('pubDate')
+      this.field('author')
     }),
     docs: []
   },

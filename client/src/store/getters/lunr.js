@@ -22,7 +22,7 @@ export const articleSearch = (state, getters) => (query) => {
 export const lunr = (state) => state.lunr
 
 export const lunrDocById = (state, getters) => (id) => {
-  getters.lunr.docs.find(doc => doc.id === Number(id))
+  return getters.lunr.docs.find(doc => doc.id === Number(id))
 }
 
 export const formatArticleDocById = (state, getters) => (id) => {

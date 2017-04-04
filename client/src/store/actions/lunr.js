@@ -10,18 +10,23 @@ import lunr from 'lunr'
 
 export const buildArticleIndex = ({ commit, state, getters }) => {
   return new Promise ((resolve, reject) => {
-    state.lunr.status = FetchStatus.LOADING
+    if (Date.now() - state.lunr.status < 600000) {
+      return resolve()
+    }
     axios.get(`${Hosts.ACTIVE}/api/articles/all`)
     .then(response => {
       const newDocs = response.data.filter(doc =>
         !getters.lunrDocById(doc.id))
-      state.lunr.status = FetchStatus.COMPLETE
+
       commit('addLunrArticleDoc', newDocs)
       commit('indexLunrArticleDoc', newDocs)
+      state.lunr.status = Date.now()
       resolve()
     })
     .catch(error => reject(error))
   })
+
+
 }
 
 // TODO replace with lunr
