@@ -7,7 +7,8 @@ import FetchStatus from './constants/fetch-status'
 import lunr from 'lunr'
 
 Vue.use(Vuex)
-console.log(getters)
+console.log('yeyooo',actions)
+console.log('yeyooo',getters)
 
 const state = {
   topArticles: {
