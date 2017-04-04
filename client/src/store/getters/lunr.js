@@ -19,8 +19,12 @@ export const articleSearch = (state, getters) => (query) => {
   return ids
 }
 
-
 export const lunr = (state) => state.lunr
+
+export const lunrDocById = (state, getters) => (id) => {
+  return getters.lunr.docs.find(doc => doc.id === Number(id))
+}
+
 export const formatArticleDocById = (state, getters) => (id) => {
   const article = {}
   const ref = getters.articleById(id)

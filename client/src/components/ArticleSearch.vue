@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div v-if="done" class ="ui text container" >
+    <div v-if="results" class ="ui text container" >
       <h1>Search results for <em>{{$route.params.key}}</em></h1>
       <SearchHit v-for="result in results" :result="result"></SearchHit>
       <div v-if="max" class="ui center aligned text container">
@@ -44,6 +44,7 @@ export default {
     SearchHit
   },
   beforeRouteUpdate (to, from, next) {
+    this.hitRefs = null
     this.match()
     next()
   },
@@ -51,11 +52,14 @@ export default {
     ...mapGetters([
       'keywords',
       'articleSearch',
-      'manyArticlesById'
+      'manyArticlesById',
+      'lunrDocById'
     ]),
 
     results() {
-      return this.manyArticlesById(this.hitRefs)
+      if (this.hitRefs) {
+        return this.hitRefs.map(doc => this.lunrDocById(doc))
+      }
     }
   },
   methods: {
@@ -64,33 +68,48 @@ export default {
       'addArticleById'
     ]),
     match () {
-      this.buildArticleIndex()
+      return new Promise((resolve, reject) => {
+        this.buildArticleIndex()
         .then(() => {
           let refs = this.articleSearch(this.$route.params.key)
           console.log('searching for', refs)
           if (!refs.length) {
             console.log('nothing!')
-            return false
+            return resolve()
           }
           let results = []
-          Promise.all(refs.map((ref) => this.addArticleById(ref))).then((articles) => {
-            articles.forEach(article => {
-              results.push(article)
-            })
-            console.log(results)
-            this.done = true
-            if (refs.length >= 20) {
-              this.max = true
-            } else {
-              this.max = false
-            }
 
-            this.hitRefs = refs
-          })
+          this.done = true
+          if (refs.length >= 20) {
+            this.max = true
+          } else {
+            this.max = false
+          }
+          this.hitRefs = refs
+          resolve(refs)
+          // refs.forEach(ref => {
+          //   results.push(this.lunrDocById(ref))
+          // })
+          // return results
+          // Promise.all(refs.map((ref) => this.addArticleById(ref))).then((articles) => {
+          //   articles.forEach(article => {
+          //     results.push(article)
+          //   })
+          //   console.log(results)
+          //   this.done = true
+          //   if (refs.length >= 20) {
+          //     this.max = true
+          //   } else {
+          //     this.max = false
+          //   }
+
+          //   this.hitRefs = refs
+          // })
         })
+      })
     }
   },
-  mounted () {
+  created () {
     console.log('calling mounted')
     this.match()
   }
