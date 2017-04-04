@@ -1,18 +1,20 @@
 <template>
   <div class="ui center aligned container">
+    <div class="ui horizontal segments">
+      <div class="ui segment">
+        <h3 class="ui header">{{ numArticles }} Articles</h3>
+      </div>
+      <div class="ui segment">
+        <h3 class="ui header">{{ numSources }} Sources</h3>
+      </div>
+      <div class="ui segment">
+        <h3 class="ui header">{{ numKeywords }} Keywords</h3>
+      </div>
+    </div>
     <SourceChart :data="allSources"></SourceChart>
     <br>
     <KeywordChart :data="topKeywords"></KeywordChart>
     <!-- <Trend v-for="trend in allTrends" :trend="trend"></Trend> -->
-    <div class="ui segment raised stat">
-      <h1 class="ui">{{ numArticles }} Articles</h1>
-    </div>
-    <div class="ui segment raised stat">
-      <h1 class="ui">{{ numSources }} Sources</h1>
-    </div>
-    <div class="ui segment raised stat">
-      <h1 class="ui">{{ numKeywords }} Keywords</h1>
-    </div>
   </div>
 
 </template>
@@ -77,6 +79,9 @@ export default {
 </script>
 
 <style scoped>
+  .segments {
+    width: 75%;
+  }
   .stat {
     width: 20%;
   }
