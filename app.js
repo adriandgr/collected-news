@@ -7,7 +7,7 @@ const app = express();
 app.use(logger('dev'));
 app.set('views', [path.join(__dirname, '/views'), path.join(__dirname, '/../views')]);
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.use(express.static('../public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
