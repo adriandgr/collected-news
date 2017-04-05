@@ -12,8 +12,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./server/routes')(app);
 
-app.get('*', (req, res) => res.status(200).send({
-  res.render('vue_entry');
-}));
+app.get('*', (req, res) => res.render('vue_entry'));
 
 module.exports = app;

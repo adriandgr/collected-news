@@ -8,7 +8,7 @@ const sourcesController = require('../controllers').sources;
 module.exports = (app) => {
   app.use((req, res, next) => {
     // TODO: REMOVE THIS CORS RULE IN PRODUCTION!!! this is not secure
-    res.header('Access-Control-Allow-Origin', '*')
+    // res.header('Access-Control-Allow-Origin', '*')
     Promise.resolve(next()).catch((ex) => {
       // handle error
       res.status(400);
