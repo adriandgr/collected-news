@@ -27,6 +27,9 @@ export const state = {
     status: FetchStatus.INIT,
     results: []
   },
+  topKeywords: {
+    results: []
+  },
   lunr: {
     status: 0,
     idx: lunr(function () {
