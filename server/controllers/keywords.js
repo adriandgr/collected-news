@@ -4,6 +4,7 @@ const keywords = require('./queries/keywords');
 const sequelize = require('../models').sequelize;
 const googleTrends = require('google-trends-api');
 const moment = require('moment');
+const fixed = require('./fixed-trend.json');
 
 module.exports = {
   index(req, res) {
@@ -67,55 +68,56 @@ module.exports = {
     })
   },
   trends(req, res) {
-    ArticleKeyword.all({
-      attributes: ['keywordId'],
-      order: '"frequency" DESC',
-      limit: 5
-    })
-      .then(instances => {
-        let keywords = [];
-        instances.forEach(instance => {
-          keywords.push(Keyword.findById(instance.dataValues.keywordId))
-        });
-        return Promise.all(keywords);
-      })
-      .then(instances => {
-        let keywords = [];
-        instances.forEach(instance => {
-          keywords.push(instance.name);
-        });
-        let trends = [];
-        keywords.forEach(keyword => {
-          trends.push(googleTrends.interestOverTime({
-            keyword: keyword,
-            startTime: moment().subtract(1, 'year')._d
-          }));
-        });
-        return Promise.all(trends)
-          .then(trendData => {
-            return [keywords, trendData]
-          })
-          .catch(err => {
-            res.json({ success: 'false' });
-            return null;
-          });
-      })
-      .then(keywordsAndTrendData => {
-        if(keywordsAndTrendData) {
-          let [keywords, trendData] = keywordsAndTrendData;
-          keywords = keywords.map((keyword, i) => {
-            return {
-              keyword: keyword,
-              dataPoints: JSON.parse(trendData[i])
-                              .default
-                              .timelineData
-                              .map(interval => { return interval.value[0] })
-            }
-          });
-          res.json({ success: true, keywords: keywords });
-        } else {
-          console.error('Google Trends API failed: too many requests');
-        }
-      })
+    res.json(fixed)
+    // ArticleKeyword.all({
+    //   attributes: ['keywordId'],
+    //   order: '"frequency" DESC',
+    //   limit: 5
+    // })
+    //   .then(instances => {
+    //     let keywords = [];
+    //     instances.forEach(instance => {
+    //       keywords.push(Keyword.findById(instance.dataValues.keywordId))
+    //     });
+    //     return Promise.all(keywords);
+    //   })
+    //   .then(instances => {
+    //     let keywords = [];
+    //     instances.forEach(instance => {
+    //       keywords.push(instance.name);
+    //     });
+    //     let trends = [];
+    //     keywords.forEach(keyword => {
+    //       trends.push(googleTrends.interestOverTime({
+    //         keyword: keyword,
+    //         startTime: moment().subtract(1, 'year')._d
+    //       }));
+    //     });
+    //     return Promise.all(trends)
+    //       .then(trendData => {
+    //         return [keywords, trendData]
+    //       })
+    //       .catch(err => {
+    //         res.json({ success: 'false' });
+    //         return null;
+    //       });
+    //   })
+    //   .then(keywordsAndTrendData => {
+    //     if(keywordsAndTrendData) {
+    //       let [keywords, trendData] = keywordsAndTrendData;
+    //       keywords = keywords.map((keyword, i) => {
+    //         return {
+    //           keyword: keyword,
+    //           dataPoints: JSON.parse(trendData[i])
+    //                           .default
+    //                           .timelineData
+    //                           .map(interval => { return interval.value[0] })
+    //         }
+    //       });
+    //       res.json({ success: true, keywords: keywords });
+    //     } else {
+    //       console.error('Google Trends API failed: too many requests');
+    //     }
+    //   })
   }
 };

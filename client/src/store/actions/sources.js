@@ -32,3 +32,14 @@ export const setSources = ({ commit, state }) =>
 export const updateSourcePage = ({ commit, state }, pageNum) => {
   commit('updateSourcePage', pageNum)
 }
+
+export const setSourceOrder = ({ commit, state }, order) => {
+  if (order === state.sources.order) {
+    return commit('toggleSourceSort')
+  }
+  commit('setSourceOrder', order)
+}
+
+export const toggleSourceFilter = ({commit, state }, sourceId) => {
+  commit('toggleSourceFilter', sourceId)
+}
