@@ -3,8 +3,7 @@ import { HorizontalBar } from 'vue-chartjs'
 export default HorizontalBar.extend({
   props: ['data'],
   mounted () {
-    console.log('chart');
-    console.log(this.data);
+    console.log('chart data', this.data);
     const keywords = this.data.map(pairs => { return pairs.keyword });
     const frequencies = this.data.map(pairs => { return pairs.frequency });
     this.renderChart({
@@ -21,19 +20,25 @@ export default HorizontalBar.extend({
         legend: { display: false },
         scales: {
           yAxes: [{
+            gridLines : {
+                drawBorder : false
+            },
             scaleLabel: {
               display: true,
               labelString: 'keywords'
             }
           }],
           xAxes: [{
-              categoryPercentage: 0.95,
-              barPercentage: 0.95,
-              ticks: { display: false },
-              scaleLabel: {
-                display: true,
-                labelString: 'popularity'
-              }
+            gridLines : {
+                drawBorder : false
+            },
+            categoryPercentage: 0.95,
+            barPercentage: 0.95,
+            ticks: { display: false },
+            scaleLabel: {
+              display: true,
+              labelString: 'popularity'
+            }
           }]
         }
        })

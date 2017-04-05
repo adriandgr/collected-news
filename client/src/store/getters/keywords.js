@@ -10,6 +10,3 @@ export const topArticles = state =>
 
 export const topArticlesById = (state, getters) => (id) =>
   getters.topArticles.results.find(article => article.id === Number(id))
-
-export const topKeywords = state =>
-  state.keywords.top

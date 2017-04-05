@@ -30,6 +30,9 @@ export default Bar.extend({
         legend: { display: false },
         scales: {
           yAxes: [{
+            gridLines : {
+                drawBorder : false
+            },
             ticks: { display: false },
             scaleLabel: {
               display: true,
