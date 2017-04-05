@@ -1,20 +1,45 @@
 <template>
   <div class="ui center aligned container">
-    <div class="ui horizontal segments">
-      <div class="ui segment">
-        <h3 class="ui header">{{ numArticles }} Articles</h3>
+      <div class="ui four column grid tiny statistics">
+      <div class="row">
+        <div class="column statistic">
+          <div class="value">
+            {{ numSources }}
+          </div>
+          <div class="label">
+            Sources
+          </div>
+        </div>
+        <div class="column statistic">
+          <div class="value">
+            {{ numArticles }}
+          </div>
+          <div class="label">
+            Articles
+          </div>
+        </div>
+        <div class="column statistic">
+          <div class="value">
+            {{ numKeywords }}
+          </div>
+          <div class="label">
+            Keywords
+          </div>
+        </div>
+        <div class="column statistic">
+          <div class="value single line">
+            {{ lastUpdated }}
+          </div>
+          <div class="label">
+            Last Updated
+          </div>
+        </div>
+        </div>
       </div>
-      <div class="ui segment">
-        <h3 class="ui header">{{ numSources }} Sources</h3>
-      </div>
-      <div class="ui segment">
-        <h3 class="ui header">{{ numKeywords }} Keywords</h3>
-      </div>
-    </div>
-    <SourceChart :data="allSources"></SourceChart>
-    <br>
-    <KeywordChart :data="topKeywords"></KeywordChart>
-    <!-- <Trend v-for="trend in allTrends" :trend="trend"></Trend> -->
+      <SourceChart v-if="allSources" :data="allSources"></SourceChart>
+      <br>
+      <KeywordChart v-if="topKeywords" :data="topKeywords"></KeywordChart>
+      <!-- <Trend v-for="trend in allTrends" :trend="trend"></Trend> -->
   </div>
 
 </template>
@@ -24,6 +49,7 @@ import SourceChart from '@/components/partials/SourceChart.js'
 import KeywordChart from '@/components/partials/KeywordChart.js'
 import Trend from '@/components/partials/Trend'
 import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'analytics',
@@ -35,17 +61,31 @@ export default {
   mounted () {
     // this.retrieveTrends();
     this.setSources();
-    this.getKeywords();
-    this.getTopKeywords();
+    this.setTopKeywords();
   },
   computed: {
     ...mapGetters([
       'sources',
       // 'trends',
-      'keywords',
+      'keywords'
     ]),
     allSources () {
-      return this.sources.results
+      return this.sources.results;
+    },
+    topKeywords () {
+      return this.keywords.top;
+    },
+    lastUpdated () {
+      let pubDates = this.sources.results
+                       .map(source => { return source.latestArticle })
+                       .filter(date => {
+                         if(!date || Date.now() - new Date(date) < 0) {
+                           return false;
+                         }
+                         return true;
+                       });
+      const mostRecent = pubDates.sort((a, b) => { return a > b ? -1 : 1 })[0];
+      return moment(mostRecent).fromNow(false);
     },
     // allTrends() {
     //   return this.trends.results.data
@@ -62,27 +102,25 @@ export default {
     },
     numKeywords () {
       return this.keywords.results.length;
-    },
-    topKeywords () {
-      return this.keywords.top;
     }
   },
   methods: {
     ...mapActions([
-      'retrieveTrends',
+      // 'retrieveTrends',
       'setSources',
-      'getKeywords',
-      'getTopKeywords'
+      'setTopKeywords'
     ])
   }
 }
 </script>
 
 <style scoped>
-  .segments {
-    width: 75%;
+  .inner {
+    margin: 0 auto;
+    text-align: center;
+    width: 90%;
   }
-  .stat {
-    width: 20%;
+  .ui.grid>.column:not(.row), .ui.grid>.row>.column {
+    padding: 0;
   }
 </style>

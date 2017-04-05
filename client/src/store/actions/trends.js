@@ -20,12 +20,16 @@ export const retrieveTrends = ({ commit, state}, keywords) => {
     });
 };
 
-export const getTopKeywords = ({ commit, state }) => {
-  axios.get(`${Hosts.ACTIVE}/api/keywords/top`)
-    .then(res => {
-      commit('setTopKeywords', res.data)
-    })
-    .catch(err => {
-      console.error(err);
-    });
+export const setTopKeywords = ({ commit, state }) => {
+  new Promise((resolve, reject) => {
+    state.keywords.status = FetchStatus.LOADING;
+    axios.get(`${Hosts.ACTIVE}/api/keywords/top`)
+      .then(res => {
+        state.keywords.status = FetchStatus.COMPLETE;
+        resolve(commit('setTopKeywords', res.data));
+      })
+      .catch(err => {
+        reject(err);
+      });
+  })
 }

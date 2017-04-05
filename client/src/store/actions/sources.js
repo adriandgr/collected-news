@@ -12,6 +12,7 @@ export const setSources = ({ commit, state }) =>
     state.sources.status = FetchStatus.LOADING
     axios.get(`${Hosts.ACTIVE}/api/sources`)
       .then(function (response) {
+        console.log(response.data.length);
         let sources = []
         response.data.forEach(source => {
           const entry = state.sources.results.find(entry => {

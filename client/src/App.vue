@@ -23,12 +23,14 @@ export default {
     'setTopKeywordArticles',
     'setSources',
     'addArticleById',
-    'getKeywords'
+    'getKeywords',
+    'setTopKeywords'
   ]),
   created () {
-    this.setSources(),
+    this.setSources()
     this.getKeywords()
     this.setTopKeywordArticles()
+    this.setTopKeywords()
   }
 }
 </script>
