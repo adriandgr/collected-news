@@ -17,7 +17,7 @@
             <div class="results"></div>
           </div>
         </div>
-        <SourceTable :sources="sourceRange"></SourceTable>
+        <SourceTable :sources="sourceRange" :filter="sourceFilter"></SourceTable>
       </div>
       <div v-else>
         no sources
@@ -52,7 +52,10 @@ export default {
       return this.sources.results
     },
     sourceRange () {
-      return this.paginateSources(this.getSourcePagintation)
+      return this.paginateSources(this.sourcePagintation)
+    },
+    sourceFilter() {
+      return this.sources.filter
     },
     hasSources () {
       let len = this.sourceRange.length

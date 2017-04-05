@@ -8,21 +8,25 @@ import Hosts from '../constants/hosts'
 import lunr from 'lunr'
 
 
-export const buildArticleIndex = ({ commit, state }) => {
+export const buildArticleIndex = ({ commit, state, getters }) => {
   return new Promise ((resolve, reject) => {
-    state.lunr.status = FetchStatus.LOADING
-    let results = []
+    if (Date.now() - state.lunr.status < 600000) {
+      return resolve()
+    }
     axios.get(`${Hosts.ACTIVE}/api/articles/all`)
     .then(response => {
-      response.data.forEach(article => {
-        results.push(article)
-      })
-      state.lunr.status = FetchStatus.COMPLETE
-      commit('addLunrArticleDoc', results)
+      const newDocs = response.data.filter(doc =>
+        !getters.lunrDocById(doc.id))
+
+      commit('addLunrArticleDoc', newDocs)
+      commit('indexLunrArticleDoc', newDocs)
+      state.lunr.status = Date.now()
       resolve()
     })
     .catch(error => reject(error))
   })
+
+
 }
 
 // TODO replace with lunr

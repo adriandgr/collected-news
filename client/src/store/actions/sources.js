@@ -12,6 +12,7 @@ export const setSources = ({ commit, state }) =>
     state.sources.status = FetchStatus.LOADING
     axios.get(`${Hosts.ACTIVE}/api/sources`)
       .then(function (response) {
+        console.log(response.data.length);
         let sources = []
         response.data.forEach(source => {
           const entry = state.sources.results.find(entry => {
@@ -31,4 +32,15 @@ export const setSources = ({ commit, state }) =>
 
 export const updateSourcePage = ({ commit, state }, pageNum) => {
   commit('updateSourcePage', pageNum)
+}
+
+export const setSourceOrder = ({ commit, state }, order) => {
+  if (order === state.sources.order) {
+    return commit('toggleSourceSort')
+  }
+  commit('setSourceOrder', order)
+}
+
+export const toggleSourceFilter = ({commit, state }, sourceId) => {
+  commit('toggleSourceFilter', sourceId)
 }

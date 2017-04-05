@@ -1,4 +1,6 @@
 import FetchStatus from './constants/fetch-status'
+import Order from './constants/order'
+
 import lunr from 'lunr'
 
 export const state = {
@@ -15,6 +17,9 @@ export const state = {
   },
   sources: {
     status: FetchStatus.INIT,
+    filter: [],
+    order: 'avg_sentiment',
+    sortAsc: false,
     pagination: 0,
     results: []
   },
@@ -23,11 +28,13 @@ export const state = {
     results: []
   },
   lunr: {
-    status: FetchStatus.INIT,
+    status: 0,
     idx: lunr(function () {
       this.field('title', { boost: 10 })
       this.field('snippet')
-    })
+      this.field('author')
+    }),
+    docs: []
   },
   keyLunr: {
     status: FetchStatus.INIT,

@@ -1,13 +1,14 @@
 <template>
 <table class="ui compact celled definition table">
   <thead>
+
     <tr>
-      <th></th>
-      <th>Name</th>
+      <th>{{filter}}</th>
+      <th @click="setSourceOrder('name')">Name</th>
       <th>Description</th>
-      <th>Category</th>
-      <th>Last Update</th>
-      <th>Score</th>
+      <th @click="setSourceOrder('category')">Category</th>
+      <th @click="setSourceOrder('latestArticle')" class="single line">Last Update</th>
+      <th @click="setSourceOrder('avg_sentiment')">Score</th>
     </tr>
   </thead>
   <tbody v-for="source in sources">
@@ -20,9 +21,10 @@
       <td >
         <router-link :to="`/sources/${source.id}`">
           <img
-          class="source-logo"
-          :src="source.logoLink"
+          class="source-logo centered-and-cropped"
+          src="../../assets/transparent.png"
           :alt="`logo for ${ source.name }`"
+          :style="`background-image: url('${source.logoLink}');`"
           :title="source.name">
         </router-link>
       </td>
@@ -39,20 +41,7 @@
   <tfoot class="full-width">
     <tr>
       <th colspan="6">
-        <div class="ui right floated pagination menu">
-          <a class="icon item" @click="prevPage">
-            <i class="left chevron icon"></i>
-          </a>
-          <a class="item" :class="{active: this.sourcePagintation === 0}" @click="setPage">1</a>
-          <a class="item" :class="{active: this.sourcePagintation === 1}" @click="setPage">2</a>
-          <a class="item" :class="{active: this.sourcePagintation === 2}" @click="setPage">3</a>
-          <a class="item" :class="{active: this.sourcePagintation === 3}" @click="setPage">4</a>
-          <a class="icon item" @click="nextPage">
-            <i class="right chevron icon"></i>
-          </a>
-        </div>
-
-
+        <SourcePaginator :numPages="sourceNumPages"></SourcePaginator>
       </th>
     </tr>
   </tfoot>
@@ -61,19 +50,16 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import SourcePaginator from '@/components/partials/SourcePaginator'
 import moment from 'moment'
 
 export default {
   name: 'sourceTable',
-  props: ['sources'],
-  computed: mapGetters([
-    'sourcePagintation',
-    'letterGrader'
-  ]),
+  props: ['sources', 'filter'],
+  components: { SourcePaginator },
+  computed: mapGetters(['letterGrader', 'sourceNumPages']),
   methods: {
-    ...mapActions([
-      'updateSourcePage'
-    ]),
+    ...mapActions(['toggleSourceFilter', 'setSourceOrder']),
     lastUpdate(source) {
       let pubDate = Number(moment(source).format('x'))
       if(!source || pubDate < 0 ) {
@@ -83,24 +69,10 @@ export default {
         console.log('date is in future!')
         return moment(pubDate - 3600000).fromNow()
       }
-
       return moment(source).fromNow()
     },
     letterGrade(sentiment) {
       return this.letterGrader(sentiment)
-    },
-    setPage (event) {
-      this.updateSourcePage(Number(event.target.innerText) - 1)
-      console.log(this.sourcePagintation)
-      //console.log(event.target.innerText)
-    },
-    prevPage () {
-      let targetPage = this.sourcePagintation - 1
-      this.updateSourcePage(targetPage)
-    },
-    nextPage () {
-      let targetPage = this.sourcePagintation + 1
-      this.updateSourcePage(targetPage)
     }
   }
 }
@@ -110,4 +82,11 @@ export default {
 .source-logo {
   width: 80px;
 }
+
+.centered-and-cropped {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 </style>

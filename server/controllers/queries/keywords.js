@@ -8,6 +8,7 @@ module.exports = {
         a.link,
         a."leadImageUrl",
         a.sentiment,
+        a."sourceId",
         popular_keywords.name,
         popular_keywords.rel
     FROM "Articles" a

@@ -15,7 +15,7 @@
       </div>
       <div class="extra content">
         <span class="right floated">
-         <a :href="article.link">
+         <a :href="article.link" :data-tooltip="sourceName" data-position="bottom right">
          <i class="chain icon"></i> source
          </a>
         </span>
@@ -28,9 +28,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'keyword',
   props: ['article'],
+  computed: {
+    ...mapGetters([
+      'sourceById'
+    ]),
+    sourceName () {
+      return this.sourceById(this.article.sourceId).name
+    }
+  }
 }
 </script>
 
