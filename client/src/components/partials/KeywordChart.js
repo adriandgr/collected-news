@@ -1,11 +1,10 @@
 import { HorizontalBar } from 'vue-chartjs'
 
 export default HorizontalBar.extend({
-  props: ['data'],
+  props: ['dataSet'],
   mounted () {
-    console.log('chart data', this.data);
-    const keywords = this.data.map(pairs => { return pairs.keyword });
-    const frequencies = this.data.map(pairs => { return pairs.frequency });
+    const keywords = this.dataSet.map(pairs => { return pairs.keyword });
+    const frequencies = this.dataSet.map(pairs => { return pairs.frequency });
     this.renderChart({
       labels: keywords,
       datasets: [

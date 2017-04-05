@@ -36,9 +36,9 @@
         </div>
         </div>
       </div>
-      <SourceChart v-if="allSources" :data="allSources"></SourceChart>
+      <SourceChart v-if="hasSources" :dataSet="allSources"></SourceChart>
       <br>
-      <KeywordChart v-if="topKeywords" :data="topKeywords"></KeywordChart>
+      <KeywordChart v-if="hasTopKeywords" :dataSet="topKeywords"></KeywordChart>
       <!-- <Trend v-for="trend in allTrends" :trend="trend"></Trend> -->
   </div>
 
@@ -58,22 +58,25 @@ export default {
     Trend,
     KeywordChart
   },
-  mounted () {
-    // this.retrieveTrends();
-    this.setSources();
-    this.setTopKeywords();
+  created () {
+    this.setSources()
+    this.setTopKeywords()
   },
   computed: {
     ...mapGetters([
       'sources',
       // 'trends',
-      'keywords'
+      'keywords',
+      'topKeywords'
     ]),
     allSources () {
       return this.sources.results;
     },
-    topKeywords () {
-      return this.keywords.top;
+    hasSources () {
+      return this.sources.results.length > 0;
+    },
+    hasTopKeywords () {
+      return this.topKeywords.length > 0;
     },
     lastUpdated () {
       let pubDates = this.sources.results
@@ -124,3 +127,4 @@ export default {
     padding: 0;
   }
 </style>
+0

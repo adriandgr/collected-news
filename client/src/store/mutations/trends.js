@@ -7,5 +7,5 @@ export const setTrends = (state, trends) => {
 }
 
 export const setTopKeywords = (state, keywords) => {
-  state.keywords.top = keywords;
+  state.topKeywords.results = keywords;
 }
