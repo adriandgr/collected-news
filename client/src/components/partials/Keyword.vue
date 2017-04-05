@@ -15,7 +15,7 @@
       </div>
       <div class="extra content">
         <span class="right floated">
-         <a :href="article.link" :data-tooltip="sourceName" data-position="bottom right">
+         <a :href="article.link">
          <i class="chain icon"></i> source
          </a>
         </span>
@@ -37,9 +37,6 @@ export default {
     ...mapGetters([
       'sourceById'
     ]),
-    sourceName () {
-      return this.sourceById(this.article.sourceId).name
-    }
   }
 }
 </script>
