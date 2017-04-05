@@ -1,12 +1,12 @@
 import { Bar } from 'vue-chartjs'
 
 export default Bar.extend({
-  props: ['data'],
+  props: ['dataSet'],
   mounted () {
-    const sourceNames = this.data.map(source => { return source.name });
-    const sentiments = this.data.map(source => { return (source.avg_sentiment * 10).toFixed(3) });
-    const numberOfArticlesPerSource = this.data.map(source => { return source.total_articles });
-    const colours = this.data.map(source => {
+    const sourceNames = this.dataSet.map(source => { return source.name });
+    const sentiments = this.dataSet.map(source => { return (source.avg_sentiment * 10).toFixed(3) });
+    const numberOfArticlesPerSource = this.dataSet.map(source => { return source.total_articles });
+    const colours = this.dataSet.map(source => {
       if (source.avg_sentiment > 0.015) {
         return '#68A423';
       } else if (source.avg_sentiment > -0.015 && source.avg_sentiment < 0.015) {
