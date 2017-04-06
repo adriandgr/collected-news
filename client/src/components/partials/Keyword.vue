@@ -1,5 +1,5 @@
 <template>
-    <div :class="(article.sentiment > -0.01 && article.sentiment < 0.01 ) ? 'ui grey centered card' : (article.sentiment > 0 ? 'ui green centered card' : 'ui red centered card')">
+    <div :class="(article.sentiment > -0.01 && article.sentiment < 0.01 ) ? 'ui grey centered card' : (article.sentiment > 0 ? 'ui green centered card' : 'ui red centered card')" v-if="isMod()">
       <router-link :to="`/article/${article.id}`" class="image">
         <img src="../../assets/transparent.png" class="centered-and-cropped" :style="`background-image: url('${article.leadImageUrl}');`">
       </router-link>
@@ -7,7 +7,7 @@
       <div class="meta">
           &mdash; keyword &mdash;
         </div>
-        <div class="header keyword"><router-link :to="`/search/keyword/${article.name}`">{{article.name}}</router-link></div>
+        <div class="header keyword"><router-link class="keyword-link" :to="`/search/keyword/${article.name}`">{{article.name}}</router-link></div>
 
         <div class="description">
         {{article.title}}
@@ -32,11 +32,18 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'keyword',
-  props: ['article'],
+  props: ['article', 'index', 'length'],
   computed: {
     ...mapGetters([
       'sourceById'
     ]),
+  },
+  methods: {
+    isMod () {
+      console.log('index', this.index);
+      console.log('length', this.length);
+      return this.index < this.length - (this.length % 3)
+    }
   }
 }
 </script>
@@ -48,6 +55,10 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+}
+
+.keyword-link {
+  color: black;
 }
 
 div.meta {

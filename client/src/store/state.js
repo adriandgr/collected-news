@@ -7,6 +7,7 @@ export const state = {
   topArticles: {
     status: FetchStatus.INIT,
     pagination: 0,
+    filter: ['u s', 's amp p', 'wasn', 'wouldn', 'http www sportbible', 'world', 'years ago'],
     busy: false,
     neverLoaded: true,
     results: []
@@ -32,6 +33,7 @@ export const state = {
   },
   lunr: {
     status: 0,
+    loading: FetchStatus.INIT,
     idx: lunr(function () {
       this.field('title', { boost: 10 })
       this.field('snippet')

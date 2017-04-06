@@ -10,7 +10,9 @@
   <div v-else>
 
     <div v-if="hasArticles" class="ui three stackable link cards">
-        <Keyword v-for="article in topArticles.results" :article="article"></Keyword>
+
+
+        <Keyword v-for="(article, index) in fileredTopArticles" :article="article" :index="index" :length="fileredTopArticles.length"></Keyword>
     </div>
     <div v-else>
       <div class="ui active centered inline massive loader"></div>
@@ -18,6 +20,7 @@
     </div>
 
   </div>
+
 </div>
 </div>
 </template>
@@ -56,7 +59,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'topArticles',
+      'fileredTopArticles',
+      'topArticles'
     ]),
     busy() {
       return this.topArticles.busy

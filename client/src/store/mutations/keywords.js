@@ -20,3 +20,7 @@ export const incrementKeywordPage = state => {
 export const toggleInfinitScroll = state => {
   state.topArticles.busy = !state.topArticles.busy
 }
+
+export const clearResults = (state) => {
+  state.keywordSearch.results = []
+}

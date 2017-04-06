@@ -10,6 +10,7 @@ import lunr from 'lunr'
 
 export const buildArticleIndex = ({ commit, state, getters }) => {
   return new Promise ((resolve, reject) => {
+    state.lunr.loading = FetchStatus.LOADING
     if (Date.now() - state.lunr.status < 600000) {
       return resolve()
     }
@@ -21,6 +22,7 @@ export const buildArticleIndex = ({ commit, state, getters }) => {
       commit('addLunrArticleDoc', newDocs)
       commit('indexLunrArticleDoc', newDocs)
       state.lunr.status = Date.now()
+      state.lunr.loading = FetchStatus.COMPLETE
       resolve()
     })
     .catch(error => reject(error))

@@ -44,14 +44,14 @@
         </div>
       </td> -->
       <td >
-        <router-link :to="`/sources/${source.id}`">
+        <!-- <router-link :to="`/sources/${source.id}`"> -->
           <img
           class="source-logo centered-and-cropped"
           src="../../assets/transparent.png"
           :alt="`logo for ${ source.name }`"
           :style="`background-image: url('${source.logoLink}');`"
           :title="source.name">
-        </router-link>
+        <!-- </router-link> -->
       </td>
       <td><strong>{{ source.name }}:</strong>
       {{source.description}}

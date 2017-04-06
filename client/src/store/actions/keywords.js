@@ -32,3 +32,7 @@ export const toggleInfinitScroll = ({commit}) =>
 export const incrementKeywordPage = ({ commit, state }) => {
   commit('incrementKeywordPage')
 }
+
+export const clearResults = ({commit}) => {
+  commit('clearResults')
+ }

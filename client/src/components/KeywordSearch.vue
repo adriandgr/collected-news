@@ -1,24 +1,28 @@
 <template>
   <div>
-
-    <div v-if="keywordSearch.results.length" class ="ui container" >
-      <h1>Search results for <em>{{$route.params.key}}</em></h1>
-      <SearchHit v-for="result in keywordSearch.results" :result="result"></SearchHit>
+    <div v-if="isLoading()" class="loading">
+      <div class="ui active centered inline massive loader"></div>
     </div>
+    <div v-else>
+      <div v-if="keywordSearch.results.length" class ="ui container" >
+        <h1>Search results for <em>{{$route.params.key}}</em></h1>
+        <SearchHit v-for="result in keywordSearch.results" :result="result"></SearchHit>
+      </div>
 
-    <div v-else class ="ui raised container segment no-results">
-      <h2 class="ui center aligned icon orange header">
-        <i class="circular find orange icon"></i>
-        No Search Results
-      </h2>
-      <h3 class="ui center aligned grey header">No keywords matched the query: <em>{{$route.params.key}}</em></h3>
+      <div v-else class ="ui raised container segment no-results" v-if="isLoading()">
+        <h2 class="ui center aligned icon orange header">
+          <i class="circular find orange icon"></i>
+          No Search Results
+        </h2>
+        <h3 class="ui center aligned grey header">No keywords matched the query: <em>{{$route.params.key}}</em></h3>
+      </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import SearchHit from '@/components/partials/SearchHit'
+import FetchStatus from '@/store/constants/fetch-status'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -27,6 +31,7 @@ export default {
     SearchHit
   },
   beforeRouteUpdate (to, from, next) {
+    //this.clearResults()
     this.match()
     next()
   },
@@ -37,7 +42,8 @@ export default {
   methods: {
     ...mapActions([
       'getKeywordSearch',
-      'getKeywords'
+      'getKeywords',
+      'clearResults'
     ]),
     match () {
       this.getKeywords()
@@ -54,7 +60,11 @@ export default {
             this.$store.dispatch('getKeywordSearch')
           }
         })
+    },
+    isLoading () {
+      return this.keywords.status === FetchStatus.LOADING
     }
+
   },
   mounted () {
     console.log('calling mounted')
@@ -65,6 +75,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.loading {
+  color: #757575;
+  font-size: 2em;
+  margin-top: 6em;
+  margin-bottom: 12em;
+}
 
 .no-results {
   margin: 5em 0;

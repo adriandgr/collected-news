@@ -38,7 +38,7 @@
       </div>
       <SourceChart v-if="hasSources" :dataSet="allSources"></SourceChart>
       <br>
-      <KeywordChart v-if="hasTopKeywords" :dataSet="topKeywords"></KeywordChart>
+      <KeywordChart v-if="hasTopKeywords" :dataSet="fileredTopKeywords"></KeywordChart>
       <Trend v-if="hasTrends" v-for="trend in allTrends" :trend="trend"></Trend>
       {{  }}
   </div>
@@ -69,7 +69,8 @@ export default {
       'sources',
       'trends',
       'keywords',
-      'topKeywords'
+      'topKeywords',
+      'fileredTopKeywords'
     ]),
     allSources () {
       return this.sources.results;
