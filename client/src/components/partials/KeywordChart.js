@@ -4,13 +4,13 @@ export default HorizontalBar.extend({
   props: ['dataSet'],
   mounted () {
     const keywords = this.dataSet.map(pairs => { return pairs.keyword });
-    const frequencies = this.dataSet.map(pairs => { return pairs.frequency });
+    const rels = this.dataSet.map(pairs => { return pairs.rel });
     this.renderChart({
       labels: keywords,
       datasets: [
         {
           backgroundColor: '#393E46',
-          data: frequencies
+          data: rels
         }
       ]
     }, {

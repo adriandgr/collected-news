@@ -35,38 +35,36 @@ module.exports = {
   },
   top(req, res) {
     ArticleKeyword.all({
-      attributes: ['keywordId', 'frequency'],
-      order: '"frequency" DESC',
+      attributes: [
+      'keywordId',
+      [ sequelize.fn('count', sequelize.col('keywordId')), 'rel' ]
+      ],
+      group: '"keywordId"',
+      order: '"rel" DESC',
       limit: 10
     })
       .then(instances => {
         let keywords = [];
-        let frequencies = [];
+        let rel = [];
         instances.forEach(instance => {
           keywords.push(Keyword.findById(instance.dataValues.keywordId));
-          frequencies.push(instance.dataValues.frequency);
+          rel.push(instance.dataValues.rel);
         });
         return Promise.all(keywords)
           .then(keywordInstances => {
-            return Promise.resolve([keywordInstances, frequencies])
+            return Promise.resolve([keywordInstances, rel])
           });
       })
-      .then(keywordInstancesAndFrequencies => {
-        const [keywordInstances, frequencies] = keywordInstancesAndFrequencies;
-        let keywordsAndFrequencies = []
+      .then(keywordInstancesAndRels => {
+        const [keywordInstances, rels] = keywordInstancesAndRels;
+        let keywordsAndRels = []
         keywordInstances.forEach((instance, i) => {
-          keywordsAndFrequencies.push(
-            { keyword: instance.name, frequency: frequencies[i] }
+          keywordsAndRels.push(
+            { keyword: instance.name, rel: rels[i] }
           );
         });
-        res.json(keywordsAndFrequencies);
+        res.json(keywordsAndRels);
       })
-  },
-  allStats(req, res) {
-    let keyword = req.params.keyword
-    keywords.individual(keyword, data => {
-      res.json(data);
-    })
   },
   trends(req, res) {
     res.json(fixed)
