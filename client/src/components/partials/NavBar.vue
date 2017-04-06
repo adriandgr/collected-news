@@ -5,7 +5,7 @@
   <div class="ui borderless main menu">
     <div class="ui container">
     <router-link to="/" class="item">
-      <div href="#" class="header item">
+      <div href="#" class="header item" v-on:click="scrollTop">
         <img class="logo" src="../../assets/placeholder.png">
         Collected News
       </div>
@@ -88,6 +88,9 @@ export default {
     ...mapActions([
       ''
     ]),
+    scrollTop () {
+      window.scrollTo(0, 0)
+    },
     hit () {
       let route = $('#search-by').dropdown('get value') || 'keyword-search'
       this.$router.push({ name: route, params: { key: this.searchTerm }})
