@@ -1,6 +1,8 @@
 <template>
+<div class="ui container">
+<div class="ui top fluid large button active" tabindex="0">Sources</div>
   <div class="ui raised container segment">
-    <h2 class="ui header"> Sources </h2>
+
 
       <div v-if="isLoading" class="no-sources">
         <div class="ui active centered inline massive loader">
@@ -9,25 +11,30 @@
 
       </div>
       <div v-else>
-      <div v-if="hasSources" class="three wide column">
-        <!-- <div class="ui menu">
-          <div class="ui category search item">
-            <div class="ui transparent icon input">
-              <input class="prompt" type="text" placeholder="Search sources...">
-              <i class="search link icon"></i>
+      <div v-if="hasSources">
+
+        <div class="three wide column">
+
+          <!-- <div class="ui menu">
+            <div class="ui category search item">
+              <div class="ui transparent icon input">
+                <input class="prompt" type="text" placeholder="Search sources...">
+                <i class="search link icon"></i>
+              </div>
+              <div class="results"></div>
             </div>
-            <div class="results"></div>
-          </div>
-        </div> -->
-        <SourceTable :sources="sourceRange" :filter="sourceFilter"></SourceTable>
-        <p>
-          </p>
+          </div> -->
+          <SourceTable :sources="sourceRange" :filter="sourceFilter"></SourceTable>
+          <p>
+            </p>
+        </div>
       </div>
       <div v-else>
         no sources
       </div>
 
     </div>
+  </div>
   </div>
 </template>
 
