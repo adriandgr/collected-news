@@ -3,15 +3,16 @@
   <thead>
 
     <tr>
-      <th>{{filter}}</th>
+      <!-- <th>{{filter}}</th> -->
+      <th>
+      </th>
       <th @click="setSourceOrder('name')" class="single line">
         <i
           class="caret icon"
           :class="{up: this.sortDirection, down: !this.sortDirection }"
           v-if="isTargetSort() === 'name'"></i>
-        Name
+          Description
       </th>
-      <th>Description</th>
       <th @click="setSourceOrder('category')" class="single line" >
         <i
           class="caret icon"
@@ -37,11 +38,11 @@
   </thead>
   <tbody v-for="source in sources">
     <tr>
-      <td class="collapsing">
+      <!-- <td class="collapsing">
         <div class="ui fitted slider checkbox">
           <input type="checkbox" checked="checked"> <label></label>
         </div>
-      </td>
+      </td> -->
       <td >
         <router-link :to="`/sources/${source.id}`">
           <img

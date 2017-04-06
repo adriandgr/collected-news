@@ -3,10 +3,8 @@
     <div class="ui center aligned container">
       <img src="../../assets/logo-inverted.png" class="ui centered mini image">
       <div class="ui horizontal inverted small divided link list">
-        <a class="item" href="#">Site Map</a>
-        <a class="item" href="#">Contact Us</a>
-        <a class="item" href="#">Terms and Conditions</a>
-        <a class="item" href="#">Privacy Policy</a>
+        <router-link class="item" to="/">Collected News</router-link>
+        <a class="item" href="https://newsapi.org/">powered by News API</a>
       </div>
     </div>
   </div>

@@ -3,12 +3,14 @@
     <h2 class="ui header"> Sources </h2>
 
       <div v-if="isLoading" class="no-sources">
-        <div class="ui active centered inline massive loader"></div>
-        <p>{{ fetchMsg }}</p>
+        <div class="ui active centered inline massive loader">
+
+        </div>
+
       </div>
       <div v-else>
       <div v-if="hasSources" class="three wide column">
-        <div class="ui menu">
+        <!-- <div class="ui menu">
           <div class="ui category search item">
             <div class="ui transparent icon input">
               <input class="prompt" type="text" placeholder="Search sources...">
@@ -16,8 +18,10 @@
             </div>
             <div class="results"></div>
           </div>
-        </div>
+        </div> -->
         <SourceTable :sources="sourceRange" :filter="sourceFilter"></SourceTable>
+        <p>
+          </p>
       </div>
       <div v-else>
         no sources
@@ -37,7 +41,6 @@ export default {
   components: { SourceTable },
   data () {
     return {
-      fetchMsg: 'waiting for sources ...',
       try: 3,
       show: true
     }
