@@ -7,7 +7,7 @@
       <div class="meta">
           &mdash; keyword &mdash;
         </div>
-        <div class="header keyword">{{article.name}}</div>
+        <div class="header keyword"><router-link :to="`/search/keyword/${article.name}`">{{article.name}}</router-link></div>
 
         <div class="description">
         {{article.title}}
