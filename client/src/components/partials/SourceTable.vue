@@ -4,11 +4,35 @@
 
     <tr>
       <th>{{filter}}</th>
-      <th @click="setSourceOrder('name')">Name</th>
+      <th @click="setSourceOrder('name')" class="single line">
+        <i
+          class="caret icon"
+          :class="{up: this.sortDirection, down: !this.sortDirection }"
+          v-if="isTargetSort() === 'name'"></i>
+        Name
+      </th>
       <th>Description</th>
-      <th @click="setSourceOrder('category')">Category</th>
-      <th @click="setSourceOrder('latestArticle')" class="single line">Last Update</th>
-      <th @click="setSourceOrder('avg_sentiment')">Score</th>
+      <th @click="setSourceOrder('category')" class="single line" >
+        <i
+          class="caret icon"
+          :class="{up: this.sortDirection, down: !this.sortDirection }"
+          v-if="isTargetSort() === 'category'"></i>
+        Category
+      </th>
+      <th @click="setSourceOrder('latestArticle')" class="single line">
+        <i
+        class="caret icon"
+        :class="{up: this.sortDirection, down: !this.sortDirection }"
+        v-if="isTargetSort() === 'latestArticle'"></i>
+        Last Update
+      </th>
+      <th @click="setSourceOrder('avg_sentiment')" class="single line">
+        <i
+        class="caret icon"
+        :class="{up: !this.sortDirection, down: this.sortDirection }"
+        v-if="isTargetSort() === 'avg_sentiment'"></i>
+        Score
+      </th>
     </tr>
   </thead>
   <tbody v-for="source in sources">
@@ -57,7 +81,7 @@ export default {
   name: 'sourceTable',
   props: ['sources', 'filter'],
   components: { SourcePaginator },
-  computed: mapGetters(['letterGrader', 'sourceNumPages']),
+  computed: mapGetters(['letterGrader', 'sourceNumPages', 'sourceOrder', 'sortDirection']),
   methods: {
     ...mapActions(['toggleSourceFilter', 'setSourceOrder']),
     lastUpdate(source) {
@@ -70,6 +94,12 @@ export default {
         return moment(pubDate - 3600000).fromNow()
       }
       return moment(source).fromNow()
+    },
+    sortUi(name) {
+      return '<i class="caret up icon"></i>'
+    },
+    isTargetSort() {
+      return this.sourceOrder
     },
     letterGrade(sentiment) {
       return this.letterGrader(sentiment)
