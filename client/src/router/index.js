@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home'
-import Sources from '@/components/Sources'
+import About from '@/components/About'
 import Analytics from '@/components/Analytics'
-import SourceArticles from '@/components/SourceArticles'
 import Article from '@/components/Article'
-import KeywordSearch from '@/components/KeywordSearch'
 import ArticleSearch from '@/components/ArticleSearch'
-import SourceSearch from '@/components/SourceSearch'
+import Home from '@/components/Home'
+import KeywordSearch from '@/components/KeywordSearch'
+import SourceArticles from '@/components/SourceArticles'
+import Sources from '@/components/Sources'
 
 Vue.use(Router)
 
@@ -39,9 +39,9 @@ export default new Router({
       name: 'article-search',
       component: ArticleSearch
     }, {
-      path: '/search/source/:key',
-      name: 'source-search',
-      component: SourceSearch
+      path: '/about',
+      name: 'about',
+      component: About
     }, {
       path: '/analytics',
       name: 'analytics',

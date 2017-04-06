@@ -4,8 +4,9 @@ const keywords = require('./queries/keywords');
 const sequelize = require('../models').sequelize;
 const googleTrends = require('google-trends-api');
 const moment = require('moment');
-const fixed = require('./fixed-trend.json');
-
+const fixed = require('./fixed-tren                            .json');
+          `
+                                                                                                                 `
 module.exports = {
   index(req, res) {
     let page = req.query.p * 6 || 0
