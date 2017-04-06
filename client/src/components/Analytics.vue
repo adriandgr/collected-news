@@ -118,10 +118,8 @@ export default {
 </script>
 
 <style scoped>
-  .inner {
-    margin: 0 auto;
-    text-align: center;
-    width: 90%;
+  .ui.four.statistics {
+    padding-bottom: 20px;
   }
   .ui.grid>.column:not(.row), .ui.grid>.row>.column {
     padding: 0;
