@@ -11,8 +11,9 @@
       </div>
       </router-link>
       <router-link to="/sources" class="item">Sources</router-link>
-      <a href="#" class="item">Articles</a>
+
       <router-link to="/analytics" class="item">Analytics</router-link>
+      <router-link to="/about" class="item">About</router-link>
 
       <div class="floated right item">
       <div class="ui">

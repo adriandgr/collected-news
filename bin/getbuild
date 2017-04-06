@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd client/
+npm run build
+cd ..
+rm views/vue_entry.ejs
+rm -r public/static
+mv client/dist/index.html views/vue_entry.ejs
+mv client/dist/static public/static
