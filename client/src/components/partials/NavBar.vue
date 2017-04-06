@@ -33,7 +33,6 @@
             <div class="menu">
               <div class="item" data-value="keyword-search">keyword</div>
               <div class="item" data-value="article-search" @click="searchingBy()">article</div>
-              <div class="item" data-value="source-search">source</div>
             </div>
           </div>
         </div>

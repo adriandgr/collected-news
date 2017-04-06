@@ -4,7 +4,6 @@
         infinite-scroll-disabled="busy"
         infinite-scroll-distance="10">
   <div v-if="isLoading" class="no-articles">
-    <div class="ui active centered inline massive loader"></div>
     <p>{{ fetchMsg }}</p>
   </div>
 
@@ -14,7 +13,8 @@
         <Keyword v-for="article in topArticles.results" :article="article"></Keyword>
     </div>
     <div v-else>
-      no articles
+      <div class="ui active centered inline massive loader"></div>
+      Loading
     </div>
 
   </div>

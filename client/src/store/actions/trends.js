@@ -9,8 +9,9 @@ import Hosts from '../constants/hosts'
 export const retrieveTrends = ({ commit, state}, keywords) => {
   axios.get(`${Hosts.ACTIVE}/api/keywords/trends`)
     .then(trends => {
-      if (trends.success) {
-        commit('setTrends', trends);
+      if (trends.data.success) {
+        console.log(trends);
+        commit('setTrends', trends.data.keywords);
       } else {
         throw 'Google Trends API failed';
       }

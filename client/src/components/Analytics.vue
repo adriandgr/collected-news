@@ -39,7 +39,8 @@
       <SourceChart v-if="hasSources" :dataSet="allSources"></SourceChart>
       <br>
       <KeywordChart v-if="hasTopKeywords" :dataSet="topKeywords"></KeywordChart>
-      <!-- <Trend v-for="trend in allTrends" :trend="trend"></Trend> -->
+      <Trend v-if="hasTrends" v-for="trend in allTrends" :trend="trend"></Trend>
+      {{  }}
   </div>
 
 </template>
@@ -61,11 +62,12 @@ export default {
   created () {
     this.setSources()
     this.setTopKeywords()
+    this.retrieveTrends()
   },
   computed: {
     ...mapGetters([
       'sources',
-      // 'trends',
+      'trends',
       'keywords',
       'topKeywords'
     ]),
@@ -77,6 +79,12 @@ export default {
     },
     hasTopKeywords () {
       return this.topKeywords.length > 0;
+    },
+    hasTrends () {
+      return this.trends.results.length > 0;
+    },
+    allTrends() {
+      return this.trends.results
     },
     lastUpdated () {
       let pubDates = this.sources.results
@@ -90,9 +98,6 @@ export default {
       const mostRecent = pubDates.sort((a, b) => { return a > b ? -1 : 1 })[0];
       return moment(mostRecent).fromNow(false);
     },
-    // allTrends() {
-    //   return this.trends.results.data
-    // },
     numSources () {
       return this.sources.results.length
     },
@@ -109,7 +114,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      // 'retrieveTrends',
+      'retrieveTrends',
       'setSources',
       'setTopKeywords'
     ])
