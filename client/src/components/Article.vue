@@ -9,7 +9,7 @@
     <p>
 
 
-  <a :href="article.link" target="_blank" data-inverted="" data-tooltip="Open original source" data-position="left center">
+  <a :href="article.link" target="_blank" data-inverted="" :data-tooltip="`Open in ${source.name}`" data-position="left center">
         <i class="external icon" ></i>
       </a>
 
@@ -49,6 +49,7 @@ export default {
       return moment(this.article.pubDate).format('lll')
     },
     source() {
+      console.log('source',this.sourceById(Number(this.article.sourceId)))
       return this.sourceById(Number(this.article.sourceId))
     },
     article() {

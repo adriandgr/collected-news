@@ -4,7 +4,7 @@
 
     <tr>
       <th>{{filter}}</th>
-      <th @click="setSourceOrder('name')">Name</th>
+      <th @click="setSourceOrder('name')"><div v-html="rawHtml">{{sortUi('name')}}</div>Name</th>
       <th>Description</th>
       <th @click="setSourceOrder('category')">Category</th>
       <th @click="setSourceOrder('latestArticle')" class="single line">Last Update</th>
@@ -70,6 +70,9 @@ export default {
         return moment(pubDate - 3600000).fromNow()
       }
       return moment(source).fromNow()
+    },
+    sortUi(name) {
+      return '<i class="caret up icon"></i>'
     },
     letterGrade(sentiment) {
       return this.letterGrader(sentiment)
