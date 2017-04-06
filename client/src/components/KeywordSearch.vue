@@ -9,12 +9,17 @@
         <SearchHit v-for="result in keywordSearch.results" :result="result"></SearchHit>
       </div>
 
-      <div v-else class ="ui raised container segment no-results" v-if="isLoading()">
+      <div v-else class ="ui raised container segment no-results">
+      <br><br><br>
         <h2 class="ui center aligned icon orange header">
           <i class="circular find orange icon"></i>
+
           No Search Results
+
         </h2>
         <h3 class="ui center aligned grey header">No keywords matched the query: <em>{{$route.params.key}}</em></h3>
+        <br><br><br>
+          <br><br><br>
       </div>
     </div>
   </div>
@@ -84,6 +89,8 @@ export default {
 }
 
 .no-results {
+  margin-top: 6em;
+  margin-bottom: 12em;
   margin: 5em 0;
 }
 
