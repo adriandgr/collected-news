@@ -5,8 +5,6 @@ export default HorizontalBar.extend({
   mounted () {
     const keywords = this.dataSet.map(pairs => { return pairs.keyword });
     const rels = this.dataSet.map(pairs => { return pairs.rel });
-    console.log('keywords', keywords);
-    console.log('rels', rels);
     this.renderChart({
       labels: keywords,
       datasets: [
