@@ -23,13 +23,19 @@ export default Line.extend({
         legend: { display: false },
         scales: {
           yAxes: [{
+            gridLines : {
+                drawBorder : false
+            },
             ticks: {
               display: false,
               beginAtZero: false
             },
           }],
           xAxes: [{
-              ticks: { display: false },
+            gridLines : {
+                drawBorder : false
+            },
+            ticks: { display: false },
           }]
         }
        })
