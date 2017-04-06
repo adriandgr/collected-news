@@ -1,7 +1,7 @@
 <template>
   <div class="ui inverted vertical footer segment">
     <div class="ui center aligned container">
-      <img src="../../assets/placeholder.png" class="ui centered mini image">
+      <img src="../../assets/logo-inverted.png" class="ui centered mini image">
       <div class="ui horizontal inverted small divided link list">
         <a class="item" href="#">Site Map</a>
         <a class="item" href="#">Contact Us</a>
