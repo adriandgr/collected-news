@@ -17,6 +17,14 @@ export const fileredSources = state => {
   })
 }
 
+export const sourceOrder = state => {
+  return state.sources.order
+}
+
+export const sortDirection = state => {
+  return state.sources.sortAsc
+}
+
 export const orderedSources = state => {
   return _.orderBy(state.sources.results, [state.sources.order, 'name'], [state.sources.sortAsc ? 'asc' : 'desc', 'asc'])
 }

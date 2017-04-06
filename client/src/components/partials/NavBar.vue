@@ -5,8 +5,8 @@
   <div class="ui borderless main menu">
     <div class="ui container">
     <router-link to="/" class="item">
-      <div href="#" class="header item" v-on:click="scrollTop">
-        <img class="logo" src="../../assets/placeholder.png">
+      <div href="#" class="header item site-name" v-on:click="scrollTop">
+        <img class="logo" src="../../assets/logo.png">
         Collected News
       </div>
       </router-link>
@@ -188,6 +188,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:700');
+
   .results.transition.visible {
     font-size: 2em;
   }
@@ -196,6 +198,9 @@ export default {
   }
   .menu-spacer {
     height: 50px;
+  }
+  .site-name {
+    font-size: 1.8em !important;
   }
 
   .main.menu {
