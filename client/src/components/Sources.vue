@@ -39,44 +39,43 @@
 </template>
 
 <script>
-import SourceTable from '@/components/partials/SourceTable'
-import { mapGetters, mapActions } from 'vuex'
-import FetchStatus from '@/store/constants/fetch-status'
+import SourceTable from '@/components/partials/SourceTable';
+import { mapGetters } from 'vuex';
+import FetchStatus from '@/store/constants/fetch-status';
 
 export default {
   name: 'sources',
   components: { SourceTable },
-  data () {
+  data() {
     return {
       try: 3,
-      show: true
-    }
+      show: true,
+    };
   },
   computed: {
     ...mapGetters([
       'paginateSources',
       'sources',
-      'sourcePagintation'
+      'sourcePagintation',
     ]),
-    allSources () {
-      return this.sources.results
+    allSources() {
+      return this.sources.results;
     },
-    sourceRange () {
-      return this.paginateSources(this.sourcePagintation)
+    sourceRange() {
+      return this.paginateSources(this.sourcePagintation);
     },
     sourceFilter() {
-      console.log(this.sources.filter)
-      return this.sources.filter
+      return this.sources.filter;
     },
-    hasSources () {
-      let len = this.sourceRange.length
-      return len > 0
+    hasSources() {
+      const len = this.sourceRange.length;
+      return len > 0;
     },
-    isLoading () {
-      return this.sources.status === FetchStatus.LOADING
-    }
-  }
-}
+    isLoading() {
+      return this.sources.status === FetchStatus.LOADING;
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

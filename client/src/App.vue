@@ -8,15 +8,15 @@
 </template>
 
 <script>
-import NavBar from '@/components/partials/NavBar'
-import Foot from '@/components/partials/Foot'
-import { mapGetters, mapActions } from 'vuex'
+import NavBar from '@/components/partials/NavBar';
+import Foot from '@/components/partials/Foot';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'app',
   components: {
     NavBar,
-    Foot
+    Foot,
   },
   computed: mapGetters(['articleById']),
   methods: mapActions([
@@ -24,15 +24,15 @@ export default {
     'setSources',
     'addArticleById',
     'getKeywords',
-    'setTopKeywords'
+    'setTopKeywords',
   ]),
-  created () {
-    this.setSources()
-    this.getKeywords()
-    this.setTopKeywordArticles()
-    this.setTopKeywords()
-  }
-}
+  created() {
+    this.setSources();
+    this.getKeywords();
+    this.setTopKeywordArticles();
+    this.setTopKeywords();
+  },
+};
 </script>
 
 <style lang="sass">

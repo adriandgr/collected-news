@@ -5,8 +5,8 @@
       </router-link>
       <div class="content">
       <div class="meta">
-          &mdash; keyword &mdash;
-        </div>
+        &mdash; keyword &mdash;
+      </div>
         <div class="header keyword"><router-link class="keyword-link" :to="`/search/keyword/${article.name}`">{{article.name}}</router-link></div>
 
         <div class="description">

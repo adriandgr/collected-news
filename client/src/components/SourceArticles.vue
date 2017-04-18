@@ -36,32 +36,34 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import ArticlePaginator from '@/components/partials/ArticlePaginator'
+import { mapGetters, mapActions } from 'vuex';
+import ArticlePaginator from '@/components/partials/ArticlePaginator';
 
 export default {
   name: 'SourceArticles',
   components: { ArticlePaginator },
-  beforeRouteUpdate (to, from, next) {
-    this.setSources().then(msg =>
-      this.addArticlesBySourceId(this.$route.params.id))
-    next()
+  beforeRouteUpdate(to, from, next) {
+    this.setSources().then(() =>
+      this.addArticlesBySourceId(this.$route.params.id));
+    next();
   },
   computed: {
-    ...mapGetters(['articlesBySourceId', 'sourceById']),
+    ...mapGetters([
+      'articlesBySourceId',
+      'sourceById',
+    ]),
     articles() {
-      return this.articlesBySourceId(this.$route.params.id)
+      return this.articlesBySourceId(this.$route.params.id);
     },
-    source () {
-      return this.sourceById(this.$route.params.id)
-    }
+    source() {
+      return this.sourceById(this.$route.params.id);
+    },
   },
-  methods: mapActions(['addArticlesBySourceId','setSources']),
-  created () {
-    this.setSources().then(msg =>
-      this.addArticlesBySourceId(this.$route.params.id))
-  }
-}
+  methods: mapActions(['addArticlesBySourceId', 'setSources']),
+  created() {
+    this.setSources().then(() => this.addArticlesBySourceId(this.$route.params.id));
+  },
+};
 </script>
 
 <style scoped>

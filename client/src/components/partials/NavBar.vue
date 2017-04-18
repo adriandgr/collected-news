@@ -1,187 +1,48 @@
 <template>
 <nav>
-  <div class="menu-spacer">
-  </div>
+  <div class="menu-spacer"></div>
   <div class="ui borderless main menu">
     <div class="ui container">
-    <router-link to="/" class="item">
-      <div href="#" class="header item site-name" v-on:click="scrollTop">
-        <img class="logo" src="../../assets/logo.png">
-        Collected News
-      </div>
+      <router-link to="/" class="item">
+        <div href="#" class="header item site-name" v-on:click="scrollTop">
+          <img class="logo" src="../../assets/logo.png"> Collected News
+        </div>
       </router-link>
-      <router-link to="/sources" class="item">Sources</router-link>
 
+      <router-link to="/sources" class="item">Sources</router-link>
       <router-link to="/analytics" class="item">Analytics</router-link>
       <router-link to="/about" class="item">About</router-link>
 
       <div class="floated right item">
-      <div class="ui">
-        <div class="ui right action left icon input">
-          <input
-            class="prompt"
-            type="text"
-            placeholder="Search by"
-            @keyup.enter="hit"
-            @blur="reset"
-            @input="searching"
-            v-model="searchTerm">
-          <i class="search icon"></i>
-          <div class="ui basic floating dropdown button" value="keyword-search" id="search-by">
-            <div class="text">keyword</div>
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div class="item" data-value="keyword-search">keyword</div>
-              <div class="item" data-value="article-search" @click="searchingBy()">article</div>
-            </div>
-          </div>
-        </div>
+        <LunrSearch></LunrSearch>
       </div>
-      </div>
-      <!-- <div class="floated right item">
-        <div class="ui right action left icon input">
-          <input
-            class="prompt"
-            type="text"
-            placeholder="Search"
-            @keyup.enter="hit"
-            @blur="reset"
-            @input="searching"
-            v-model="searchTerm">
-            <i class="search icon"></i>
-          <div class="ui basic floating dropdown button" id="search-by">
-            <div class="text">by</div>
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div class="item" data-value="keyword">keyword</div>
-              <div class="item" data-value="article">article</div>
-              <div class="item" data-value="source">source</div>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
   </div>
-
-  </nav>
+</nav>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import LunrSearch from '@/components/partials/LunrSearch'
 
 export default {
   name: 'navBar',
-  data() {
-    return {
-      searchTerm: '',
-      loading: false,
-      //keys: this.$store.getters.keywords.results
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'keywords'
-    ])
-  },
+  components: { LunrSearch },
   methods: {
-    ...mapActions([
-      ''
-    ]),
     scrollTop () {
       window.scrollTo(0, 0)
     },
-    hit () {
-      let route = $('#search-by').dropdown('get value') || 'keyword-search'
-      this.$router.push({ name: route, params: { key: this.searchTerm }})
-      this.searchTerm = ''
-      console.log('search by', route)
-
-    },
-    searchingBy() {
-      let search = $('#search-by').dropdown('get value')
-      if (search === 'article-search') {
-        return 'Search articles'
-      }
-      if (search === 'source-search') {
-        return 'Search sources'
-      }
-      return 'Search keywords'
-    },
-    reset () {
-      this.searchTerm = ''
-    },
-    searching () {
-      if (!this.loading) {
-        this.loading = true
-        $('.ui.right.action.left.icon.input').addClass('loading')
-        setTimeout(()=>{
-          $('.ui.right.action.left.icon.input').removeClass('loading')
-          this.loading = false
-        },800)
-      }
-    }
   },
   mounted: function () {
-    var content = [
-    {
-      title: 'Horse',
-      description: 'An Animal',
-    },
-    {
-      title: 'Cow',
-      description: 'Another Animal',
-    }
-  ];
-
-
-    $('.ui.search')
-      .search({
-        source : this.keywords.results,
-        searchFields   : [
-          'name'
-        ],
-        fields: {
-      title   : 'name',
-
-    },
-        minCharacters : 1
-      })
-    ;
-
 
     // fix main menu to page on passing
-          $('.main.menu').visibility({
-            type: 'fixed'
-          });
-          // show dropdown on hover
-          $('.main.menu  .ui.dropdown').dropdown({
-            on: 'click'
-          });
+    $('.main.menu').visibility({
+      type: 'fixed'
+    });
+    // show dropdown on click
+    $('.main.menu  .ui.dropdown').dropdown({
+      on: 'click'
+    });
 
-
-    this.$nextTick(function () {
-      // code that assumes this.$el is in-document
-      $(document)
-        .ready(function() {
-
-
-
-
-
-          //   .search({
-          //     apiSettings: {
-          //       url: '//localhost:8000/api/articles/{query}'
-          //     },
-          //     fields: {
-          //       results : 'title',
-          //       title   : 'title'
-          //     },
-          //     minCharacters : 1
-          //   })
-          // ;
-
-        });
-    })
   }
 }
 </script>
